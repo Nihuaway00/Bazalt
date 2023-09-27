@@ -1,6 +1,10 @@
-FROM next:latest
+FROM node:18
 WORKDIR .
 COPY . .
-RUN npm install
-EXPOSE 8000
-CMD ["next", "start"]
+RUN npm install --production
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+
