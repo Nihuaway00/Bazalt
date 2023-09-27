@@ -43,20 +43,27 @@ services:
     environment:
       - GCP_PROJECT=bazalt-89939
       - RDB_EMULATOR_PORT=9005
-  server:
-    build:
-      context: https://github.com/Nihuaway/Bazalt#
-      dockerfile: Dockerfile
+  backend:
+    build: https://github.com/Nihuaway/Bazalt#master:backend
     ports:
-      - 8000:80
-    image: https://github.com/Nihuaway/Bazalt.git/
-    container_name: server
-    env_file:
-      - .env
+      - 8000:8000
+    image: backend
+    container_name: backend
     volumes:
       - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
+      - backend:/home/node/app/node_modules
+  # frontend:
+  #   build:
+  #     context: https://github.com/Nihuaway/Bazalt/tree/master/frontend
+  #   ports:
+  #     - 3000:30000
+  #   image: frontend
+  #   container_name: frontend
+  #   volumes:
+  #     - .:/home/node/app
+  #     - frontend:/home/node/app/node_modules
 
 volumes:
   minio-storage:
-  node_modules:
+  backend:
+  frontend:
