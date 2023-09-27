@@ -1,0 +1,71 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "es5",
+        "paths": {
+            "#errorHandler": [
+                "./src/handlers/errorHandler.js"
+            ],
+            "#database/*": [
+                "./src/database/*"
+            ],
+            "#functions/*": [
+                "./src/functions/*"
+            ],
+            "#middlewares/*": [
+                "./src/middlewares/*"
+            ],
+            "#auth/*": [
+                "./src/auth/*"
+            ],
+            "#session/*": [
+                "./src/auth/session/*"
+            ],
+            "#socket/*": [
+                "./src/auth/socket/*"
+            ],
+            "#restoreToken/*": [
+                "./src/auth/restoreToken/*"
+            ],
+            "#activateToken/*": [
+                "./src/auth/activateToken/*"
+            ],
+            "#user/*": [
+                "./src/user/*"
+            ],
+            "#avatar/*": [
+                "./src/user/avatar/*"
+            ],
+            "#online/*": [
+                "./src/user/online/*"
+            ],
+            "#password/*": [
+                "./src/user/password/*"
+            ],
+            "#email/*": [
+                "./src/user/email/*"
+            ],
+            "#members/*": [
+                "./src/chats/members/*"
+            ],
+            "#chats/*": [
+                "./src/chats/*"
+            ],
+            "#messages/*": [
+                "./src/chats/messages/*"
+            ],
+            "#messages_app/*": [
+                "./src/chats/messages/messages_app/*"
+            ],
+            "#handlers/*": [
+                "./src/handlers/*"
+            ],
+            "#attachment/*": [
+                "./src/chats/messages/attachment/*"
+            ],
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ],
+}

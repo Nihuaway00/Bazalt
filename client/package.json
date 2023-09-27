@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^2.1.0",
+    "@chakra-ui/next-js": "^2.1.5",
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "axios": "^1.4.0",
+    "crypto": "^1.0.1",
+    "framer-motion": "^10.16.2",
+    "next": "latest",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "socket.io-client": "^4.7.2",
+    "socket.io-stream": "^0.9.1",
+    "styled-components": "^6.0.7",
+    "validate.js": "^0.13.1"
+  },
+  "devDependencies": {
+    "eslint": "8.47.0",
+    "eslint-config-next": "13.4.19"
+  },
+  "resolutions": {
+    "styled-components": "^5"
+  }
+}

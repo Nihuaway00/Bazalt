@@ -1,0 +1,25 @@
+/node_modules
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+package-lock.json
+#eslint
+.eslintrc.json
+
+#docs
+docs/dev.log
+docs/.obsidian

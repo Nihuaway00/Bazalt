@@ -1,0 +1,28 @@
+# Dependency directories
+node_modules/
+.npm
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+package-lock.json
+
+#vscode settiongs
+.vscode
+.vscode.github
+
+#eslint
+.eslintrc.cjs
+.eslintcache
+
+# firebase
+database.rules.json
+firebase.json
+.firebaserc
+
+#docs
+docs
