@@ -45,8 +45,8 @@ services:
       - RDB_EMULATOR_PORT=9005
   backend:
     build:
-      - context: https://github.com/Nihuaway/Bazalt#master:backend
-      - dockerfile: https://github.com/Nihuaway/Bazalt#master:backend/Dockerfile
+      - context: "https://github.com/Nihuaway/Bazalt#master:backend"
+      - dockerfile: "https://github.com/Nihuaway/Bazalt#master:backend/Dockerfile"
     ports:
       - 8000:8000
     image: backend
