@@ -44,9 +44,7 @@ services:
       - GCP_PROJECT=bazalt-89939
       - RDB_EMULATOR_PORT=9005
   backend:
-    build:
-      - context: "https://github.com/Nihuaway/Bazalt#master:backend"
-      - dockerfile: "https://github.com/Nihuaway/Bazalt#master:backend/Dockerfile"
+    build: https://github.com/Nihuaway/Bazalt#master:backend
     ports:
       - 8000:8000
     image: backend
