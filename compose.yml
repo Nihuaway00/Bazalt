@@ -41,7 +41,7 @@ services:
       - "4000:4000"
       - "9005:9005"
     environment:
-      - GCP_PROJECT=bazalt-89939
+      - GCP_PROJECT=bazalt
       - RDB_EMULATOR_PORT=9005
   backend:
     # build: https://github.com/Nihuaway/Bazalt.git#master:backend
