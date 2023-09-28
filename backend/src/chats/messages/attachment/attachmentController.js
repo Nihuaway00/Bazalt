@@ -10,7 +10,7 @@ import {
 	deleteDoc,
 	updateDoc,
 } from "firebase/firestore"
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { attachmentConverter, Attachment } from "#attachment/attachment.js"
 
 class attachmentController {
@@ -38,7 +38,7 @@ class attachmentController {
 		const snaps = await getDocs(q)
 		return snaps.docs
 	}
- 
+
 	add = async (messageID, path) => {
 		const ref = await addDoc(this.coll, new Attachment(messageID, path))
 		return await getDoc(ref)

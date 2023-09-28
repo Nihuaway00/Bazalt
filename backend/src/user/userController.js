@@ -1,6 +1,6 @@
 
 import { collection, query, where, getDocs, addDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore"
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { userConverter, User } from "#user/user.js"
 
 class UserController {

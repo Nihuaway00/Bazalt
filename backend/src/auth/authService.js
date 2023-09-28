@@ -25,7 +25,7 @@ class AuthService {
 			const session = req.session
 			if (!email || !pass) throw ErrorHandler.BadRequest("invalid input data")
 
-			if (process.env.ENV === "development") {
+			if (process.env.NODE_ENV === "development") {
 				session.key = "dev"
 			}
 

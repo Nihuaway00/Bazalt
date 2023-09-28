@@ -48,6 +48,7 @@
   },
   "imports": {
     "#errorHandler": "./src/handlers/errorHandler.js",
+    "#config/*": "./config/*",
     "#database/*": "./src/database/*",
     "#functions/*": "./src/functions/*",
     "#middlewares/*": "./src/middlewares/*",

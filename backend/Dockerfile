@@ -1,5 +1,5 @@
 FROM node:16.17.0
-WORKDIR .
+WORKDIR /backend
 COPY . .
 RUN npm install
 EXPOSE 8000

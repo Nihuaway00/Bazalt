@@ -1,5 +1,5 @@
 import { collection, query, getDocs, addDoc, deleteDoc, where, updateDoc } from "firebase/firestore"
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { onlineConverter, Online } from "#online/online.js"
 
 class OnlineController {

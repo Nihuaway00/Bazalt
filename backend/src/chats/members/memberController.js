@@ -9,7 +9,7 @@ import {
 	deleteDoc,
 	where,
 } from "firebase/firestore"
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { memberConverter, Member } from "#members/member.js"
 
 class MemberController {

@@ -9,7 +9,7 @@ import {
 	getDoc,
 } from "firebase/firestore"
 
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { messageConverter, Message } from "#messages/message.js"
 import ChatController from "#chats/chatController.js"
 

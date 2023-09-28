@@ -10,7 +10,7 @@ import {
 	updateDoc,
 } from "firebase/firestore"
 
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { chatConverter, Chat } from "#chats/chat.js"
 
 class chatController {

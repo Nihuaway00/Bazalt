@@ -13,7 +13,7 @@ import {
 	updateDoc,
 } from "firebase/firestore"
 
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { avatarConverter, Avatar } from "#avatar/avatar.js"
 
 class AvatarController {

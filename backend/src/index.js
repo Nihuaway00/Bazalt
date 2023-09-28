@@ -10,19 +10,16 @@ import createRoutes from "./routes.js"
 const app = express()
 const server = http.createServer(app)
 const router = express.Router()
-const PORT = process.env.PORT || 80
-const COOKIE_SECRET = process.env.COOKIE_SECRET || "cookie_secret"
+
+const PORT = process.env.PORT
+const COOKIE_SECRET = process.env.COOKIE_SECRET
+const CLIENT_URL = process.env.CLIENT_URL
 
 const corsConfig = {
-	origin: "http://localhost:3000",
+	origin: CLIENT_URL,
 	credentials: true,
 }
 
-//if (process.env.ENV === "production") {
-//	app.set("trust proxy", 1)
-//	sessionMiddleware.cookie.secure = true
-//	//socketSessionMiddleware.cookie.secure = true
-//}
 app.disable("x-powered-by")
 app.use(cors(corsConfig))
 app.use(express.json())

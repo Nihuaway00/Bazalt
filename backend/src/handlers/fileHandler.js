@@ -1,4 +1,4 @@
-import minio from "#database/minIO.js"
+import minio from "#database/minio.js"
 
 //docs: https://min.io/docs/minio/linux/developers/javascript/API.html#javascript-client-api-reference
 

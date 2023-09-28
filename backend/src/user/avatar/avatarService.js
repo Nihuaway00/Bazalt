@@ -14,7 +14,7 @@ class AvatarService {
 			if (!userID || !avatarSizes.includes(parseInt(size))) throw new Error("Invalid input data")
 			const avatarSnap = await AvatarController.getFromUserID(userID)
 			if (!avatarSnap?.exists()) throw new Error("This user doesn`t has avatar")
-			res.send({ path: `${process.env.URL}/${process.env.PATH_AVATARS}${size}x/${avatarSnap.data().path}` })
+			res.send({ path: `${process.env.URL + ":" + process.env.PORT}/${process.env.PATH_AVATARS}${size}x/${avatarSnap.data().path}` })
 		} catch (e) {
 			console.log(e.message)
 			res.status(500).send(e.message)

@@ -11,7 +11,7 @@ import {
 	updateDoc,
 } from "firebase/firestore"
 
-import db from "#database/index.js"
+import db from "#database/firebase.js"
 import { passwordConverter, Password } from "#password/password.js"
 
 class passwordController {

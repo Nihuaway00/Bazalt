@@ -19,6 +19,7 @@ node_modules/
 .eslintcache
 
 # firebase
+firebase.init.json
 database.rules.json
 firebase.json
 .firebaserc

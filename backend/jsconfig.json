@@ -3,6 +3,9 @@
         "baseUrl": ".",
         "target": "es5",
         "paths": {
+            "#config": [
+                "./config/*"
+            ],
             "#errorHandler": [
                 "./src/handlers/errorHandler.js"
             ],

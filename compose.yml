@@ -44,7 +44,8 @@ services:
       - GCP_PROJECT=bazalt-89939
       - RDB_EMULATOR_PORT=9005
   backend:
-    build: https://github.com/Nihuaway/Bazalt.git#master:backend
+    # build: https://github.com/Nihuaway/Bazalt.git#master:backend
+    build: /backend
     ports:
       - 8000:8000
     image: backend
@@ -53,13 +54,14 @@ services:
       - .:/home/node/app
       - backend:/home/node/app/node_modules
   frontend:
-    build: https://github.com/Nihuaway/Bazalt.git#master:frontend
+    # build: https://github.com/Nihuaway/Bazalt.git#master:frontend
+    build: /frontend
     ports:
       - 3000:3000
     image: frontend
     container_name: frontend
     volumes:
-      - .:/home/node/app
+      - .:/home/node/app/
       - frontend:/home/node/app/node_modules
 
 volumes:
