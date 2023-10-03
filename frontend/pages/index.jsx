@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import {useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
 	Avatar,
@@ -20,10 +20,11 @@ import {
 	Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
 } from '@chakra-ui/react'
 import ChatItem from '../components/chats/item/chat_item'
-import {UserContext} from '../layouts/providers'
+import { UserContext } from '../layouts/providers'
 import ChatNull from '../components/chats/null/chat_null'
-import {ChatIcon, EmailIcon, SearchIcon} from '@chakra-ui/icons'
-import {useRouter} from 'next/router'
+import { ChatIcon, EmailIcon, SearchIcon } from '@chakra-ui/icons'
+import { useRouter } from 'next/router'
+import UserModal from '../components/user/modal'
 
 const Home = () => {
 	const router = useRouter()
@@ -38,10 +39,13 @@ const Home = () => {
 	const [receiverID, setReceiverID] = useState(null)
 	const [messageValue, setMessageValue] = useState('')
 
+
+	const [isUserModalOpen, setUserModalOpen] = useState(false)
+
 	useEffect(() => {
 		if (!user) return
 		//request chatIDs
-		setChatIDs(['chatID1', 'chatID2'])
+		setChatIDs(['chatID1', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2'])
 	}, [user])
 
 
@@ -50,43 +54,58 @@ const Home = () => {
 	}
 
 	return (
-		<Stack spacing={6} align={'center'}>
-			<Heading size="lg" userSelect={'none'}>Чаты</Heading>
-			<Stack direction={'row'} spacing={16}>
-				<Stack spacing={4} minWidth={'300px'} maxWidth={'600px'} align={'center'}>
-					{chatIDs.length > 0 ? chatIDs.map(chatID => {
-						//request
-						const chat = {
-							_id: chatID,
-							title: 'Хуйс' + chatID,
-							creatorID: 'creatorID',
-							isPrivate: false,
-							key: {},
-							avatarID: 'avatarID',
-							unreadCount: 3
-						}
-
-						const lastMessage = {
-							_id: 'mesd',
-							value: 'зуй зуй хуй хуй...! ',
-							sentAt: new Date().getTime(),
-							chatID: 'chatID',
-							editAt: null,
-							isReplyTo: null,
-							hasAttachments: false,
-							system: false,
-							userID: 'userID'
-						}
-
-						return <ChatItem key={chat._id} chat={chat} lastMessage={lastMessage}/>
-					}) : <ChatNull/>}
+		<>
+			<Stack spacing={6} align={'center'} height='100%'>
+				<Stack direction='horizontal' align='center' justifyContent='space-between' width='100%'>
+					<Heading size="lg" userSelect={'none'}>Чаты</Heading>
+					<Stack onClick={() => setUserModalOpen(true)} cursor='pointer' direction='horizontal' align='center'>
+						<Text>Никита</Text>
+						<Avatar src='./2.jpg' size='xs' />
+					</Stack>
 				</Stack>
-				<Stack>
-					<Button onClick={() => router.push('/message')} variant={'outline'} size={'sm'}>Написать</Button>
-					<Button variant={'outline'} size={'sm'}>Создать чат</Button>
+				<Divider />
+				<Stack width='100%' direction={'row'} height='100%' spacing={8}>
+					<Container height='100%' overflow='auto'>
+						<Stack padding='0 0 48px 0' spacing={4} minWidth={'300px'} width='100%' align={'center'}>
+							{chatIDs.length > 0 ? chatIDs.map(chatID => {
+								//request
+								const chat = {
+									_id: chatID,
+									title: 'Хуйс' + chatID,
+									creatorID: 'creatorID',
+									isPrivate: false,
+									key: {},
+									avatarID: 'avatarID',
+									unreadCount: 3
+								}
+
+								const lastMessage = {
+									_id: 'mesd',
+									value: 'зуй зуй хуй хуй...! ',
+									sentAt: new Date().getTime(),
+									chatID: 'chatID',
+									editAt: null,
+									isReplyTo: null,
+									hasAttachments: false,
+									system: false,
+									userID: 'userID'
+								}
+
+								return <ChatItem key={chat._id} chat={chat} lastMessage={lastMessage} />
+							}) : <ChatNull />}
+						</Stack>
+					</Container>
+					<Stack>
+						<Button onClick={() => router.push('/message')} variant={'outline'} size={'sm'}>Написать</Button>
+						<Button onClick={() => router.push('/new_chat')} variant={'outline'} size={'sm'}>Создать чат</Button>
+					</Stack>
 				</Stack>
 			</Stack>
-		</Stack>
+			{
+				!isUserModalOpen || <UserModal userID={'fdfkjl'} isOpen={isUserModalOpen} onClose={() => setUserModalOpen(false)} />
+			}
+		</>
+
 	)
 }
 

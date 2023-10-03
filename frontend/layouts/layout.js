@@ -6,7 +6,7 @@ export default function RootLayout({
 }) {
 	return (
 		<Providers>
-			<Container padding="64px 0 64px 0" height={"100vh"}>
+			<Container maxWidth="600px" padding="32px 0 32px 0" height={"100vh"}>
 				{children}
 			</Container>
 		</Providers>
