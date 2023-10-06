@@ -12,7 +12,7 @@ const UserRoutes = (app) => {
 	//   avatarService.add
 	// );
 	// app.post("/user/avatar/delete", avatarService.delete);
-	app.get("user/chats", SessionMiddleware.authorized, UserService.getChats)
+	app.get("/user/chats", SessionMiddleware.authorized, UserService.getChats)
 }
 
 export default UserRoutes

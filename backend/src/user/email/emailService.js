@@ -1,33 +1,40 @@
-import { createTransport } from "nodemailer"
+import { createTransport } from 'nodemailer'
+
+const host = process.env.EMAIL_HOST
+const port = process.env.EMAIL_PORT
+const user = process.env.EMAIL_AUTH_USER
+const pass = process.env.EMAIL_AUTH_PASS
+
+if (!pass) {
+	console.log("NODEMAIER: you need pass to smtp email to send mail");
+}
 
 const transporter = createTransport(
 	{
-		host: "localhost",
-		service: "gmail",
-		port: 8000,
-		secure: false, // true for 465, false for other ports
+		host,
+		port, // true for 465, false for other ports
 		auth: {
-			user: "nikitatroshin2305@gmail.com",
-			pass: "atdhdfadxwarltfk",
+			user,
+			pass,
 		},
 	},
 	{
-		from: `${"Bazalt"} <${"nikitatroshin2305@gmail.com"}>`,
+		from: `${"Bazalt"} <${user}>`,
 	}
 )
 
 class EmailService {
-	send(email, text, subject, data) {
+	static send = (email, subject, data) => {
 		transporter.sendMail(
 			{
 				to: email,
-				text: text,
+				text: 'text',
 				html: data,
 				subject: subject,
 			},
-			(err) => console.log(err ? err.message : "email was sent")
+			(err) => console.log(err ? err.message : "NODEMAILER: email has sent")
 		)
 	}
 }
 
-export default new EmailService()
+export default EmailService

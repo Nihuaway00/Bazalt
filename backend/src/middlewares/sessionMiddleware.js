@@ -6,6 +6,7 @@ class SessionMiddleware {
 		try {
 			const { userID, key } = req.session
 			if (!userID || !key) throw ErrorHandler.Unauthorized()
+			next()
 		} catch (e) {
 			next(e)
 		}

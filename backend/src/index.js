@@ -33,7 +33,6 @@ app.get("/", (req, res) => {
 	res.end("Backend of Bazalt has started")
 })
 
-
 const io = new Server(server, { cors: corsConfig })
 createRoutes(router, io)
 server.listen(PORT, async () => {

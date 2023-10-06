@@ -5,6 +5,7 @@ const AuthRoutes = (app) => {
 	app.post("/auth/registration", AuthService.registration)
 	app.get("/auth/activate/:activate_token", AuthService.activate)
 	app.post("/auth/login", AuthService.login)
+	app.get("/auth/refresh", SessionMiddleware.authorized, AuthService.refresh)
 	app.post("/auth/verify", AuthService.verify)
 	app.get("/auth/logout", SessionMiddleware.authorized, AuthService.logout)
 	app.post("/auth/restore", AuthService.sendRestoreToken)

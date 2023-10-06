@@ -53,16 +53,16 @@ services:
     volumes:
       - .:/home/node/app
       - backend:/home/node/app/node_modules
-  frontend:
-    # build: https://github.com/Nihuaway/Bazalt.git#master:frontend
-    build: /frontend
-    ports:
-      - 3000:3000
-    image: frontend
-    container_name: frontend
-    volumes:
-      - .:/home/node/app/
-      - frontend:/home/node/app/node_modules
+  # frontend:
+  #   # build: https://github.com/Nihuaway/Bazalt.git#master:frontend
+  #   build: /frontend
+  #   ports:
+  #     - 3000:3000
+  #   image: frontend
+  #   container_name: frontend
+  #   volumes:
+  #     - .:/home/node/app/
+  #     - frontend:/home/node/app/node_modules
 
 volumes:
   minio-storage:

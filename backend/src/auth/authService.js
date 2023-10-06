@@ -57,6 +57,16 @@ class AuthService {
 		}
 	}
 
+	async refresh(req, res, next) {
+		try {
+			const { userID } = req.session
+			const userSnap = await UserController.getFromID(userID)
+			res.send({ user: userSnap.data() })
+		} catch (e) {
+			next(e)
+		}
+	}
+
 	async verify(req, res, next) {
 		try {
 			const {
@@ -129,9 +139,8 @@ class AuthService {
 				{ expiresIn: ACTIVATE_RELOAD_INTERVAL }
 			)
 			await ActivateTokenController.add(activeToken, userSnap.id)
-			await EmailService.send(
+			EmailService.send(
 				email,
-				"Account activation",
 				"Account activation",
 				activeToken
 			)
