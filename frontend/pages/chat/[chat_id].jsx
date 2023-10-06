@@ -54,6 +54,7 @@ import FileInput from '../../components/common/file/fileInput'
 import FileInputButton from '../../components/common/file/fileInputButton'
 import ModalSample from '../../components/common/modal/modalSample'
 import ChatModal from '../../components/chats/chatModal'
+import { useSelector } from 'react-redux'
 
 
 const importChat = {
@@ -190,7 +191,7 @@ const Bottom = () => {
 const ChatPage = () => {
 	const router = useRouter()
 	const { chat_id } = router.query
-	const { userID } = useContext(UserContext)
+	const user = useSelector(state => state.user)
 
 	const [chat, setChat] = useState(null)
 	const [avatar, setAvatar] = useState(null)

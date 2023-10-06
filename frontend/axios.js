@@ -8,4 +8,10 @@ const $api = axios.create({
 	withCredentials: true,
 })
 
+$api.interceptors.response.use((res) => {
+	return res
+}, (err) => {
+	return Promise.reject(err)
+})
+
 export default $api

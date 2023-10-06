@@ -1,5 +1,4 @@
-import Head from 'next/head'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
 	Avatar,
@@ -20,15 +19,17 @@ import {
 	Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
 } from '@chakra-ui/react'
 import ChatItem from '../components/chats/item/chat_item'
-import { UserContext } from '../layouts/providers'
 import ChatNull from '../components/chats/null/chat_null'
 import { ChatIcon, EmailIcon, SearchIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import UserModal from '../components/user/modal'
+import { useSelector } from 'react-redux'
+import UserRoute from '../routes/userRoute'
+import Authorized from '../middlewares/authorized'
 
 const Home = () => {
 	const router = useRouter()
-	const user = useContext(UserContext)
+	const user = useSelector(state => state.user)
 	const [chatIDs, setChatIDs] = useState(null)
 	const [lastMessage, setLastMessage] = useState(null)
 
@@ -39,17 +40,18 @@ const Home = () => {
 	const [receiverID, setReceiverID] = useState(null)
 	const [messageValue, setMessageValue] = useState('')
 
-
 	const [isUserModalOpen, setUserModalOpen] = useState(false)
 
 	useEffect(() => {
 		if (!user) return
-		//request chatIDs
-		setChatIDs(['chatID1', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2', 'chatID2'])
+		const getChats = async () => await UserRoute.getChats()
+		getChats().then(({ chatIDs }) => {
+			setChatIDs(chatIDs)
+		})
 	}, [user])
 
 
-	if (!chatIDs) {
+	if (chatIDs === null) {
 		return (<Heading>Загрузка...</Heading>)
 	}
 
@@ -59,7 +61,7 @@ const Home = () => {
 				<Stack direction='horizontal' align='center' justifyContent='space-between' width='100%'>
 					<Heading size="lg" userSelect={'none'}>Чаты</Heading>
 					<Stack onClick={() => setUserModalOpen(true)} cursor='pointer' direction='horizontal' align='center'>
-						<Text>Никита</Text>
+						<Text>{user.name}</Text>
 						<Avatar src='./2.jpg' size='xs' />
 					</Stack>
 				</Stack>

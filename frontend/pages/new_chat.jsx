@@ -3,12 +3,23 @@ import { ArrowBackIcon, PlusSquareIcon, SearchIcon, AddIcon } from '@chakra-ui/i
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import AvatarImage from 'next/image'
+import FileInput from '../components/common/file/fileInput'
 
 const NewChatPage = () => {
 	const router = useRouter()
 	const [title, setTitle] = useState('')
 	const [avatar, setAvatar] = useState(null)
 	const [isCreating, setCreating] = useState(false)
+
+
+	const onCreate = async () => {
+		setCreating(true)
+
+		setTimeout(() => {
+			router.push('/')
+			setCreating(false)
+		}, 200)
+	}
 
 	return (
 		<Stack spacing={6} align={'center'} height={'100%'} paddingTop={'128px'}>
@@ -40,15 +51,7 @@ const NewChatPage = () => {
 				</InputGroup>
 			</Stack>
 			<Button isDisabled={!title} isLoading={isCreating} colorScheme="blue" variant={'outline'}
-				mr={3}
-				onClick={() => {
-					//request
-					setCreating(true)
-					setTimeout(() => {
-						router.push('/')
-						setCreating(false)
-					}, 200)
-				}}>
+				onClick={onCreate}>
 				Создать
 			</Button>
 		</Stack>

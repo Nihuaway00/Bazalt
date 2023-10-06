@@ -2,8 +2,11 @@
 import { Heading, Input, Stack, Text, InputGroup, InputLeftElement, StackDivider, InputRightElement, Button, ModalContent } from "@chakra-ui/react"
 import { Modal, ModalBody, ModalHeader, ModalFooter, ModalCloseButton, ModalOverlay } from "@chakra-ui/react"
 import { CheckIcon, CloseIcon, EmailIcon, LockIcon, StarIcon, WarningIcon } from "@chakra-ui/icons"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
+import AuthRoute from "../../routes/authRoute"
+import { useDispatch, useSelector } from "react-redux"
+import { set } from "../../store/slices/userSlice"
 
 
 const RequestRestoreModal = () => {
@@ -25,15 +28,29 @@ const RequestRestoreModal = () => {
 }
 
 const LoginPage = () => {
-	const router = useRouter()
+	const router = useRouter();
+	const dispatch = useDispatch()
 	const [email, setEmail] = useState("")
 	const [pass, setPass] = useState("")
-
+	const user = useSelector(state => state.user)
 	const [restoreEmail, setRestoreEmail] = useState("")
 	const [isOpenRestore, setOpenRestore] = useState(false)
 
-	const onLogin = () => {
-		//TODO: login logic
+	const onLogin = async () => {
+		const { user, sessionID } = await AuthRoute.login(email, pass)
+		dispatch(set(user))
+		localStorage.setItem('sessionID', sessionID)
+
+		router.push('/')
+	}
+
+	if (user && !user.unauthorized) {
+		return (
+			<Stack>
+				<Heading>{user.name},</Heading>
+				<Text>вы уже авторизованы</Text>
+			</Stack>
+		)
 	}
 
 	const onRequestRestore = () => {
@@ -54,14 +71,14 @@ const LoginPage = () => {
 						<InputLeftElement>
 							<EmailIcon />
 						</InputLeftElement>
-						<Input onChange={(e) => setEmail(e.target.value)} isRequired={true} placeholder="Ваша почта" type="email" />
+						<Input value={email} onChange={(e) => setEmail(e.target.value)} isRequired={true} placeholder="Ваша почта" type="email" />
 
 					</InputGroup>
 					<InputGroup>
 						<InputLeftElement>
 							<LockIcon />
 						</InputLeftElement>
-						<Input onChange={(e) => setPass(e.target.value)} placeholder="Пароль" type="password" />
+						<Input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Пароль" type="password" />
 					</InputGroup>
 				</Stack>
 				<Stack direction={"row"} align={"center"} gap={"24px"} divider={<StackDivider borderColor='gray.200' />} justifyContent="space-between">

@@ -1,13 +1,15 @@
 "use client"
 import { Heading, Input, Stack, Text, InputGroup, InputLeftElement, InputRightElement, Button } from "@chakra-ui/react"
-import { CheckIcon, CloseIcon, EmailIcon, LockIcon, StarIcon, WarningIcon } from "@chakra-ui/icons"
+import { CheckIcon, CloseIcon, EmailIcon, LockIcon, StarIcon, ViewIcon, WarningIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react"
 import { validate } from "validate.js"
 import { useRouter } from "next/router"
+import AuthRoute from "../../routes/authRoute"
 
 const RegisterPage = () => {
 	const router = useRouter()
 
+	const [name, setName] = useState("")
 	const [email, setEmail] = useState("")
 	const [pass1, setPass1] = useState("")
 	const [pass2, setPass2] = useState("")
@@ -24,8 +26,9 @@ const RegisterPage = () => {
 	}, [pass1])
 
 
-	const onRegistration = () => {
-		//TODO: reg logic
+	const onRegistration = async () => {
+		const r = await AuthRoute.registration(email, name, pass1)
+		console.log(r);
 	}
 
 	return (
@@ -39,9 +42,15 @@ const RegisterPage = () => {
 			<Stack spacing={2}>
 				<InputGroup>
 					<InputLeftElement>
+						<ViewIcon />
+					</InputLeftElement>
+					<Input value={name} onChange={(e) => setName(e.target.value)} isRequired={true} placeholder="Имя" type="text" />
+				</InputGroup>
+				<InputGroup>
+					<InputLeftElement>
 						<EmailIcon />
 					</InputLeftElement>
-					<Input isInvalid={!!isInvalidEmail} onChange={(e) => setEmail(e.target.value)} isRequired={true} placeholder="Ваша почта" type="email" />
+					<Input value={email} isInvalid={!!isInvalidEmail} onChange={(e) => setEmail(e.target.value)} isRequired={true} placeholder="Ваша почта" type="email" />
 					<InputRightElement>
 						{isInvalidEmail ? <WarningIcon /> : <CheckIcon />}
 					</InputRightElement>
