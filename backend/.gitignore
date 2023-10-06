@@ -24,5 +24,4 @@ firebase.json
 .firebaserc
 
 #docs
-docs/History
-docs/.obsidian
+docs
