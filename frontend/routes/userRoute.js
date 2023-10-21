@@ -4,12 +4,11 @@ const url = process.env.BACKEND_URL
 
 class UserRoute {
 	static getChats = async () => {
-		try {
-			const { data } = await $api.get(`${url}/user/chats`)
-			return data
-		} catch (e) {
-			return e.message
-		}
+		return await $api.get(`${url}/user/chats`)
+	}
+
+	static search = async (tag) => {
+		return await $api.get(`${url}/user/${tag}`)
 	}
 }
 

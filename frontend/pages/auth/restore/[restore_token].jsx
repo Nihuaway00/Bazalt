@@ -3,9 +3,11 @@ import { Button, Heading, Input, InputGroup, InputLeftElement, InputRightElement
 import { useEffect, useState } from "react"
 import { validate } from "validate.js"
 import { useRouter } from "next/router"
+import { useRestoreEnd } from "../../../hooks/auth/useRestoreEnd"
 
 const RestorePage = () => {
 	const router = useRouter()
+	const onRestoreEnd = useRestoreEnd()
 	const { restore_token } = router.query
 
 	const [pass1, setPass1] = useState("")
@@ -13,6 +15,18 @@ const RestorePage = () => {
 
 	const [isInvalidPass, setInvalidPass] = useState(undefined)
 	const [isChanged, setChanged] = useState(false)
+
+	const restoreEndHandler = () => {
+		onRestoreEnd.mutate({ pass: pass1, restore_token }, {
+			onSuccess: () => {
+				alert('Password has changed!')
+				setChanged(true)
+			},
+			onError: (err) => {
+				alert('restore end: ' + err.message)
+			}
+		})
+	}
 
 	useEffect(() => {
 		setInvalidPass(validate({ value: pass1 }, { value: { format: /(?=.*[0-9])(?=.*[a-z])[0-9a-zA-Z!@#$%^&*]{6,}/ } }))
@@ -47,7 +61,8 @@ const RestorePage = () => {
 				}
 
 				if (!isInvalidPass && pass1 === pass2) {
-					setChanged(true)
+					restoreEndHandler()
+
 				}
 			}}>{isChanged ? "На страницу входа" : "Изменить"}</Button>
 		</Stack>

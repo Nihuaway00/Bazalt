@@ -1,29 +1,57 @@
 "use client"
-import { Heading, Input, Stack, Text, InputGroup, InputLeftElement, StackDivider, InputRightElement, Button, ModalContent } from "@chakra-ui/react"
+import { Heading, Input, Stack, Text, InputGroup, InputLeftElement, StackDivider, InputRightElement, Button, ModalContent, Wrap, Divider } from "@chakra-ui/react"
 import { Modal, ModalBody, ModalHeader, ModalFooter, ModalCloseButton, ModalOverlay } from "@chakra-ui/react"
 import { CheckIcon, CloseIcon, EmailIcon, LockIcon, StarIcon, WarningIcon } from "@chakra-ui/icons"
 import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import AuthRoute from "../../routes/authRoute"
 import { useDispatch, useSelector } from "react-redux"
-import { set } from "../../store/slices/userSlice"
+import { set, setUser, unauthorized } from "../../store/slices/userSlice"
+import { validate } from "validate.js"
+import ModalSample from "../../components/common/modal/modalSample"
+import { useQuery } from "react-query"
+import { useLogin } from "../../hooks/auth/useLogin"
+import { useLogout } from "../../hooks/auth/useLogout"
+import { useRestore } from "../../hooks/auth/useRestore"
 
 
-const RequestRestoreModal = () => {
+const RequestRestoreModal = ({ isOpen, onClose }) => {
+	const onRestore = useRestore()
+	const [email, setEmail] = useState("")
+	const [isInvalidEmail, setInvalidEmail] = useState(undefined)
+
+	useEffect(() => {
+		setInvalidEmail(validate({ value: email }, { value: { email: true } }))
+	}, [email])
+
+	const onSendRestore = async () => {
+		onRestore.mutate({ email }, {
+			onSuccess: () => {
+				alert('Check your email')
+			},
+			onError: (err) => {
+				alert('restore: ' + err.message)
+			}
+		})
+	}
+
 	return (
-		<Modal>
-			<ModalOverlay />
-			<ModalContent>
-				<ModalHeader>Отправить ссылку на восстановление пароля</ModalHeader>
-				<ModalCloseButton />
-				<ModalBody>
-					email
-				</ModalBody>
-				<ModalFooter>
-					<Button>Отправить</Button>
-				</ModalFooter>
-			</ModalContent>
-		</Modal>
+		<ModalSample isOpen={isOpen} onClose={onClose} header={'Восстановление пароля'}>
+			<ModalBody paddingTop="24px">
+				<InputGroup>
+					<InputLeftElement>
+						<EmailIcon />
+					</InputLeftElement>
+					<Input value={email} isInvalid={!email ? false : !!isInvalidEmail} onChange={(e) => setEmail(e.target.value)} isRequired={true} placeholder="Почта вашего аккаунта" type="email" />
+					{!email || <InputRightElement>
+						{isInvalidEmail ? <WarningIcon /> : <CheckIcon />}
+					</InputRightElement>}
+				</InputGroup>
+			</ModalBody>
+			<ModalFooter justifyContent={"center"}>
+				<Button onClick={onSendRestore} isDisabled={!email || !!isInvalidEmail}>Отправить</Button>
+			</ModalFooter>
+		</ModalSample>
 	)
 }
 
@@ -33,28 +61,50 @@ const LoginPage = () => {
 	const [email, setEmail] = useState("")
 	const [pass, setPass] = useState("")
 	const user = useSelector(state => state.user)
-	const [restoreEmail, setRestoreEmail] = useState("")
+
 	const [isOpenRestore, setOpenRestore] = useState(false)
 
-	const onLogin = async () => {
-		const { user, sessionID } = await AuthRoute.login(email, pass)
-		dispatch(set(user))
-		localStorage.setItem('sessionID', sessionID)
+	const onLogin = useLogin()
+	const onLogout = useLogout()
 
-		router.push('/')
+
+	const loginHandler = async () => {
+		onLogin.mutate({ email, pass }, {
+			onSuccess: ({ data }) => {
+
+				dispatch(setUser(data.user))
+				localStorage.setItem('sessionID', data.sessionID)
+				router.push('/')
+			},
+			onError: (err) => {
+				alert(err.message)
+			}
+		})
 	}
+
+	const logoutHandler = async () => {
+		onLogout.mutate({}, {
+			onSuccess: () => {
+				alert('Logout')
+				dispatch(unauthorized())
+				localStorage.removeItem('sessionID')
+				router.push('/auth/login')
+			},
+			onError: (err) => {
+				alert(err.message)
+			}
+		})
+	}
+
 
 	if (user && !user.unauthorized) {
 		return (
-			<Stack>
+			<Stack direction={'column'} align={'center'}>
 				<Heading>{user.name},</Heading>
-				<Text>вы уже авторизованы</Text>
+				<Text>вы авторизованы!</Text>
+				<Button onClick={logoutHandler}>Выйти</Button>
 			</Stack>
 		)
-	}
-
-	const onRequestRestore = () => {
-
 	}
 
 	return (
@@ -83,30 +133,12 @@ const LoginPage = () => {
 				</Stack>
 				<Stack direction={"row"} align={"center"} gap={"24px"} divider={<StackDivider borderColor='gray.200' />} justifyContent="space-between">
 					<Text fontSize="sm" width={"min-content"} onClick={() => {
-						//router.push("/auth/restore")
 						setOpenRestore(true)
 					}}>Забыли пароль?</Text>
-					<Button onClick={onLogin}>Войти</Button>
+					<Button isLoading={onLogin.isLoading} onClick={loginHandler}>Войти</Button>
 				</Stack>
 			</Stack>
-			<Modal isOpen={isOpenRestore} onClose={() => setOpenRestore(false)}>
-				<ModalOverlay />
-				<ModalContent>
-					<ModalHeader>Отправить ссылку на восстановление пароля</ModalHeader>
-					<ModalCloseButton />
-					<ModalBody>
-						<InputGroup>
-							<InputLeftElement>
-								<EmailIcon />
-							</InputLeftElement>
-							<Input onChange={(e) => setRestoreEmail(e.target.value)} isRequired={true} placeholder="Почта вашего аккаунта" type="email" />
-						</InputGroup>
-					</ModalBody>
-					<ModalFooter justifyContent={"center"}>
-						<Button>Отправить</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
+			<RequestRestoreModal isOpen={isOpenRestore} onClose={() => setOpenRestore(false)} />
 		</>
 	)
 }

@@ -2,10 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export const userSlice = createSlice({
 	name: 'user',
-	initialState: null,
+	initialState: { unauthorized: true },
 	reducers: {
-		set: (state, action) => {
-			return action.payload
+		setUser: (state, action) => {
+			return { ...action.payload, unauthorized: false }
 		},
 		unauthorized: (state) => {
 			return { unauthorized: true }
@@ -13,5 +13,5 @@ export const userSlice = createSlice({
 	}
 })
 
-export const { set } = userSlice.actions
+export const { setUser, unauthorized } = userSlice.actions
 export default userSlice.reducer

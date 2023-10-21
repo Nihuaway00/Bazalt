@@ -5,9 +5,11 @@ import { useEffect, useState } from "react"
 import { validate } from "validate.js"
 import { useRouter } from "next/router"
 import AuthRoute from "../../routes/authRoute"
+import { useRegistration } from "../../hooks/auth/useRegistration"
 
 const RegisterPage = () => {
 	const router = useRouter()
+	const onRegistration = useRegistration()
 
 	const [name, setName] = useState("")
 	const [email, setEmail] = useState("")
@@ -16,6 +18,8 @@ const RegisterPage = () => {
 
 	const [isInvalidEmail, setInvalidEmail] = useState(undefined)
 	const [isInvalidPass, setInvalidPass] = useState(undefined)
+
+
 
 	useEffect(() => {
 		setInvalidEmail(validate({ value: email }, { value: { email: true } }))
@@ -26,9 +30,15 @@ const RegisterPage = () => {
 	}, [pass1])
 
 
-	const onRegistration = async () => {
-		const r = await AuthRoute.registration(email, name, pass1)
-		console.log(r);
+	const registrationHandler = async () => {
+		onRegistration.mutate({ email, name, pass: pass1 }, {
+			onSuccess: () => {
+				alert('Check your email')
+			},
+			onError: (err) => {
+				alert(err.message)
+			}
+		})
 	}
 
 	return (
@@ -74,7 +84,7 @@ const RegisterPage = () => {
 					</InputRightElement>
 				</InputGroup>
 			</Stack>
-			<Button onClick={onRegistration}>Зарегистрироваться</Button>
+			<Button isLoading={onRegistration.isLoading} isDisabled={isInvalidEmail || isInvalidPass || pass1 !== pass2 || !name} onClick={registrationHandler}>Зарегистрироваться</Button>
 		</Stack>
 	)
 }

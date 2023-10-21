@@ -4,32 +4,27 @@ const url = process.env.BACKEND_URL
 
 class AuthRoute {
 	static registration = async (email, name, pass) => {
-		try {
-			const { data } = await $api.post(`${url}/auth/registration`, { email, name, pass })
-			return data
-		}
-		catch (e) {
-			return e.message
-		}
+		return await $api.post(`${url}/auth/registration`, { email, name, pass })
 	}
 
 	static login = async (email, pass) => {
-		try {
-			const { data } = await $api.post(`${url}/auth/login`, { email, pass })
-			return data
-		}
-		catch (e) {
-			return e.message
-		}
+		return await $api.post(`${url}/auth/login`, { email, pass })
 	}
 
 	static refresh = async () => {
-		try {
-			const { data } = await $api.get(`${url}/auth/refresh`)
-			return data
-		} catch (e) {
-			throw e
-		}
+		return await $api.get(`${url}/auth/refresh`)
+	}
+
+	static logout = async () => {
+		return await $api.get(`${url}/auth/logout`)
+	}
+
+	static restore = async (email) => {
+		return await $api.post(`${url}/auth/restore`, { email })
+	}
+
+	static restoreEnd = async (restore_token, newPassword) => {
+		return await $api.post(`${url}/auth/restore/${restore_token}`, { newPassword })
 	}
 }
 

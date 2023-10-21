@@ -25,7 +25,7 @@ import { useRouter } from 'next/router'
 import UserModal from '../components/user/modal'
 import { useSelector } from 'react-redux'
 import UserRoute from '../routes/userRoute'
-import Authorized from '../middlewares/authorized'
+import Authorized from '../middlewares/authorizedMiddleware'
 
 const Home = () => {
 	const router = useRouter()

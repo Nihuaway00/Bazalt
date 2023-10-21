@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import userReducer from './slices/userSlice'
+import socketReducer from './slices/socketSlice'
 
-export default configureStore({
+const store = configureStore({
 	reducer: {
-		user: userReducer
+		user: userReducer,
+		socket: socketReducer
 	},
 	devTools: true
 })
+
+export { store }

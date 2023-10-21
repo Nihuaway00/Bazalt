@@ -7,7 +7,6 @@ const Authorized = ({ children, passUrls }) => {
 	const user = useSelector(state => state.user)
 	const router = useRouter()
 
-
 	if (!user) {
 		return (<Heading>Загрузка...</Heading>)
 	}
@@ -15,7 +14,7 @@ const Authorized = ({ children, passUrls }) => {
 	if (passUrls.filter(url => !!router.pathname.match(url)).length > 0) {
 		return children
 	}
-
+	console.log(user);
 	if (user.unauthorized) {
 		return (<Heading>Авторизуйся блять.</Heading>)
 	}
