@@ -31,7 +31,6 @@ class CryptoMiddleware {
 				new Uint8Array(encrypted.split(",")),
 				new Uint8Array(iv.split(","))
 			)
-
 			req.body = { ...JSON.parse(decrypted), iv }
 			next()
 		} catch (e) {

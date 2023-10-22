@@ -74,6 +74,8 @@ class ChatService {
 			const { timestamp, newest } = req.body
 			const { userID } = req.session
 
+			console.log(newest);
+
 			if (!chat_id || !timestamp)
 				throw ErrorHandler.BadRequest("Invalid input data")
 			const chatSnap = await ChatController.getFromID(chat_id)
@@ -86,12 +88,12 @@ class ChatService {
 			let messageSnaps = []
 			if (newest) {
 				messageSnaps = await MessageController.get([
-					where("sentAt", ">", new Date(timestamp.seconds * 1000)),
+					where("sentAt", ">", new Date(timestamp)),
 					limit(10)
 				])
 			} else {
 				messageSnaps = await MessageController.get([
-					where("sentAt", "<=", new Date(timestamp.seconds * 1000)),
+					where("sentAt", "<=", new Date(timestamp)),
 					limit(10)
 				])
 			}
@@ -271,21 +273,22 @@ class ChatService {
 
 	leave = async (req, res) => {
 		try {
-			const { chat_id, member_id } = req.params
+			const { chat_id } = req.params
 			const { userID } = req.session
 
-			if (!chat_id || !member_id) throw ErrorHandler.BadRequest()
+			if (!chat_id) throw ErrorHandler.BadRequest()
 			const chatSnap = await ChatController.getFromID(chat_id)
 			if (!chatSnap.exists()) throw ErrorHandler.NotFound()
-			const memberSnap = await MemberController.getFromID(member_id)
+
+
+			const memberSnap = await MemberController.getOne(userID, chat_id)
 			if (!memberSnap.exists()) throw ErrorHandler.NotFound()
-			if (userID !== memberSnap.data().userID) throw ErrorHandler.Forbidden()
 
 			if (memberSnap.data().userID === chatSnap.data().creatorID) {
 				//перенос создателя на другого участника
 			}
 
-			await MemberController.delete(member_id)
+			await MemberController.delete(memberSnap.id)
 			const systemMessageSnap = await MessageController.add(
 				chat_id,
 				null,
@@ -293,9 +296,14 @@ class ChatService {
 				true,
 				false
 			)
-			this.io
-				.to(chat_id)
-				.emit("SERVER:chat/member/leave", { message: systemMessageSnap.data() })
+
+			if (this.io) {
+				this.io
+					.to(chat_id)
+					.emit("SERVER:chat/member/leave", { message: systemMessageSnap.data() })
+			}
+
+
 			res.sendStatus(201)
 		} catch (e) {
 			console.log(e.message)

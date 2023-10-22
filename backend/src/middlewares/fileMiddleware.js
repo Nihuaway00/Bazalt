@@ -17,6 +17,11 @@ class FileMiddleware {
 		try {
 			const files = req.files
 
+			if (!files) {
+				next()
+				return
+			}
+
 			files.map(async file => {
 				console.log(file)
 
@@ -48,8 +53,13 @@ class FileMiddleware {
 			const { iv } = req.body
 			const { key } = req.session
 
+			if (!encryptedFiles) {
+				next()
+				return
+			}
+
 			const aes = new AesCryptoHandler()
-			await aes.generateKeyFromData(key, "salt")
+			await aes.generateKeyFromData(key.toString(), "salt")
 
 			const promiseFiles = encryptedFiles.map(async encrypted => {
 				const eBuffer = new Uint8Array(encrypted.buffer)

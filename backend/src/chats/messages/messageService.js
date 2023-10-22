@@ -64,10 +64,10 @@ class MessageService {
 				userID,
 				value,
 				false,
-				!!attachments.length
+				!!attachments?.length
 			)
 
-			attachments.map(async attachment => {
+			attachments?.map(async attachment => {
 				const ref = await AttachmentController.createRef()
 				FileHandler.uploadBuffer(
 					"attachments",
