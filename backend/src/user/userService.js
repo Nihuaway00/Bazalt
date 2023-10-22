@@ -1,4 +1,6 @@
+import ErrorHandler from "#errorHandler"
 import MemberController from "#members/memberController.js"
+import UserController from "#user/userController.js"
 
 class UserService {
 	//get = async (req, res) => {
@@ -12,6 +14,18 @@ class UserService {
 	//		res.status(500).send(e.message)
 	//	}
 	//}
+
+	find = async (req, res) => {
+		try {
+			const { tag } = req.params
+			if (!tag) throw ErrorHandler.BadRequest()
+			const userSnap = await UserController.getFromTag(tag)
+			res.send({ user: userSnap.data() })
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
 
 	// edit = async (req, res) => {
 	//   try {
@@ -62,10 +76,10 @@ class UserService {
 			const { userID } = req.session
 
 			const memberSnaps = await MemberController.getFromUserID(userID)
-			res.send({ chatIDs: memberSnaps.map(({ data }) => data().chatID) })
+			res.send({ chatIDs: memberSnaps.map((snap) => snap.data().chatID) })
 		} catch (e) {
-			console.log(e.message)
-			res.status(e.status).send(e.message)
+			console.log(e?.message)
+			res.status(e?.status).send(e?.message)
 		}
 	}
 }

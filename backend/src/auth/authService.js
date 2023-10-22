@@ -44,6 +44,7 @@ class AuthService {
 			if (!passVerified) throw ErrorHandler.BadRequest("Password is incorrect")
 
 			req.session.userID = userID
+			req.session.key = 24
 			req.session.save()
 
 			await SessionController.bindUser(userID, session.id)
@@ -142,7 +143,7 @@ class AuthService {
 			EmailService.send(
 				email,
 				"Account activation",
-				activeToken
+				`http://localhost:${process.env.PORT}/auth/activate/${activeToken}`
 			)
 
 			res.sendStatus(201)
@@ -204,8 +205,7 @@ class AuthService {
 			await EmailService.send(
 				email,
 				"Restore access",
-				"Restore access",
-				`Follow the link - https://localhost:8000/auth/restore/${restoreToken}`
+				`Follow the link - http://localhost:3000/auth/restore/${restoreToken}`
 			)
 
 			res.status(201).send("code had sent to email")

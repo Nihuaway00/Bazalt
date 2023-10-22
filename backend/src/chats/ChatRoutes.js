@@ -35,7 +35,7 @@ const ChatRoutes = (app, io) => {
 	app.post(
 		"/chat/:chat_id/member",
 		SessionMiddleware.authorized,
-		Chat.addMember
+		Chat.invite
 	)
 	app.get(
 		"/chat/:chat_id/member/:member_id/leave",

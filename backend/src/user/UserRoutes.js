@@ -13,6 +13,7 @@ const UserRoutes = (app) => {
 	// );
 	// app.post("/user/avatar/delete", avatarService.delete);
 	app.get("/user/chats", SessionMiddleware.authorized, UserService.getChats)
+	app.get("/user/:tag", SessionMiddleware.authorized, UserService.find)
 }
 
 export default UserRoutes

@@ -16,7 +16,7 @@ class ErrorHandler extends Error {
 	}
 
 	static NotFound = (message, errors = []) => {
-		return new ErrorHandler(400, message ? message : "Not found", errors)
+		return new ErrorHandler(404, message ? message : "Not found", errors)
 	}
 
 	static Forbidden = (message, errors = []) => {

@@ -23,6 +23,11 @@ class UserController {
 		return snaps.docs[0]
 	}
 
+	getFromTag = async (tag) => {
+		const q = query(this.coll, where("tag", "==", tag))
+		const snaps = await getDocs(q)
+		return snaps.docs[0]
+	}
 
 	getFromEmail = async (email) => {
 		const q = query(this.coll, where("email", "==", email))

@@ -14,7 +14,7 @@ class ChatService {
 
 	constructor(io) {
 		this.io = io
-		io.on("connection", socket => (this.socket = socket))
+		this.io.on("connection", socket => (this.socket = socket))
 	}
 
 	get = async (req, res, next) => {
@@ -139,11 +139,11 @@ class ChatService {
 			const { title } = req.body
 			const { userID } = req.session
 
-			if (!title || !userID) throw ErrorHandler.BadRequest()
-
+			if (!title || !userID) throw ErrorHandler.BadRequest("no title or userID")
 			const aes = new AesCryptoHandler()
-			await aes.generatekey()
+			await aes.generateKey()
 			const chatKeyJwk = await aes.exportKey()
+
 
 			const chatSnap = await ChatController.add(
 				title,
@@ -151,9 +151,11 @@ class ChatService {
 				userID,
 				chatKeyJwk
 			)
-			await MemberController.add(chatSnap.id, userID)
+			await MemberController.add(chatSnap.id, userID, userID)
+			if (this.socket) {
+				this.socket.emit("SERVER:chat", chatSnap.data())
 
-			this.socket.emit("SERVER:chat", chatSnap.data())
+			}
 			res.sendStatus(201)
 		} catch (e) {
 			console.log(e.message)
@@ -224,7 +226,7 @@ class ChatService {
 	//   }
 	// }
 
-	addMember = async (req, res) => {
+	invite = async (req, res) => {
 		try {
 			const { chat_id } = req.params
 			const { invitedID } = req.body
@@ -235,9 +237,9 @@ class ChatService {
 			if (!chatSnap.exists()) throw ErrorHandler.NotFound()
 
 			const memberSnap = await MemberController.getOne(userID, chat_id)
-			if (!memberSnap.exists()) throw ErrorHandler.Forbidden()
-
+			if (!memberSnap) throw ErrorHandler.Forbidden()
 			const invitedUserSnap = await UserController.getFromID(invitedID)
+
 			if (!invitedUserSnap.exists())
 				throw ErrorHandler.BadRequest("Invated user already in chat")
 
@@ -245,7 +247,7 @@ class ChatService {
 				invitedID,
 				chat_id
 			)
-			if (invitedMemberSnap.exists())
+			if (invitedMemberSnap)
 				throw ErrorHandler.BadRequest("Invated user already in chat")
 
 			await MemberController.add(chat_id, invitedID, userID)
@@ -291,10 +293,10 @@ class ChatService {
 				true,
 				false
 			)
-
 			this.io
 				.to(chat_id)
 				.emit("SERVER:chat/member/leave", { message: systemMessageSnap.data() })
+			res.sendStatus(201)
 		} catch (e) {
 			console.log(e.message)
 			res.status(e.status).send(e.message)
