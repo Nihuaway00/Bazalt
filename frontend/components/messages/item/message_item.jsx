@@ -67,7 +67,13 @@ const MessageItem = ({ userID, value, isSelf, id, hasAttachments, editAt, isRepl
 				</Stack>
 				<Stack direction='row' align='center'>
 					{/* {!isSelf || <CheckIcon boxSize={"10px"} />} */}
-					<Text userSelect={"none"} fontSize='xs' whiteSpace={"nowrap"}>22:50</Text>
+					<Text userSelect={"none"} fontSize='xs' whiteSpace={"nowrap"}>{
+						new Date(sentAt.seconds * 1000).toLocaleString('ru', {
+							hour: 'numeric',
+							minute: 'numeric'
+						})
+
+					}</Text>
 				</Stack>
 			</Stack>
 		</Stack>

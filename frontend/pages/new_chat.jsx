@@ -4,21 +4,25 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import AvatarImage from 'next/image'
 import FileInput from '../components/common/file/fileInput'
+import { useCreateChat } from '../hooks/chats/useCreateChat'
 
 const NewChatPage = () => {
 	const router = useRouter()
 	const [title, setTitle] = useState('')
 	const [avatar, setAvatar] = useState(null)
-	const [isCreating, setCreating] = useState(false)
 
+	const onCreateChat = useCreateChat()
 
 	const onCreate = async () => {
-		setCreating(true)
-
-		setTimeout(() => {
-			router.push('/')
-			setCreating(false)
-		}, 200)
+		onCreateChat.mutate({ title }, {
+			onSuccess: ({ data }) => {
+				alert('Chat created!')
+				router.push('/')
+			},
+			onError: (err) => {
+				alert('Error: ' + err.message)
+			}
+		})
 	}
 
 	return (
@@ -50,7 +54,7 @@ const NewChatPage = () => {
 						placeholder="Имя чата" />
 				</InputGroup>
 			</Stack>
-			<Button isDisabled={!title} isLoading={isCreating} colorScheme="blue" variant={'outline'}
+			<Button isDisabled={!title} isLoading={onCreateChat.isLoading} colorScheme="blue" variant={'outline'}
 				onClick={onCreate}>
 				Создать
 			</Button>

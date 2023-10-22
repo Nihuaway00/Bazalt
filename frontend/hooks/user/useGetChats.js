@@ -1,6 +1,9 @@
-import { useMutation } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import UserRoute from "../../routes/userRoute"
 
-export const useGetChat = () => {
-	return useMutation(['chats'], () => UserRoute.getChats)
+export const useGetChats = (unauthorized) => {
+	return useQuery(['chats'], UserRoute.getChats, {
+		enabled: !unauthorized,
+		select: ({ data }) => data
+	})
 }

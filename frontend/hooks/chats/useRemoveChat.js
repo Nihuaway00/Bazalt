@@ -3,5 +3,5 @@ import ChatRoute from "../../routes/chatRoute"
 
 
 export const useRemoveChat = (chatID) => {
-	return useMutation(['remove chat', chatID], () => ChatRoute.remove)
+	return useMutation(['chat', 'remove', chatID], () => ChatRoute.remove)
 }

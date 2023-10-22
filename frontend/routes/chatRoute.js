@@ -13,8 +13,8 @@ class ChatRoute {
 		return await $api.get(`${url}/chat/${chatID}/remove`)
 	}
 
-	static getMessages = async (timestamp, newest) => {
-		return await $api.post(`${url}/chat/${chatID}/messages`, { timestamp, newest })
+	static getMessages = async (chatID, timestamp, newest) => {
+		return await $api.post(`${url}/chat/` + chatID + '/messages', { timestamp, newest })
 	}
 
 	static invite = async (chatID, invitedID) => {
@@ -23,8 +23,8 @@ class ChatRoute {
 		})
 	}
 
-	static leave = async (chatID, memberID) => {
-		return await $api.get(`${url}/chat/${chatID}/member/memberID/leave`)
+	static leave = async (chatID) => {
+		return await $api.get(`${url}/chat/${chatID}/leave`)
 	}
 
 

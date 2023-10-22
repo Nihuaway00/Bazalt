@@ -20,40 +20,27 @@ import {
 } from '@chakra-ui/react'
 import ChatItem from '../components/chats/item/chat_item'
 import ChatNull from '../components/chats/null/chat_null'
-import { ChatIcon, EmailIcon, SearchIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import UserModal from '../components/user/modal'
 import { useSelector } from 'react-redux'
-import UserRoute from '../routes/userRoute'
-import Authorized from '../middlewares/authorizedMiddleware'
+import { useGetChats } from '../hooks/user/useGetChats'
 
 const Home = () => {
 	const router = useRouter()
 	const user = useSelector(state => state.user)
-	const [chatIDs, setChatIDs] = useState(null)
-	const [lastMessage, setLastMessage] = useState(null)
-
-	const [isOpen, setOpen] = useState(false)
-	const [searchValue, setSearchValue] = useState('')
-	const [isSearchLoading, setSearchLoading] = useState(false)
-
-	const [receiverID, setReceiverID] = useState(null)
-	const [messageValue, setMessageValue] = useState('')
-
 	const [isUserModalOpen, setUserModalOpen] = useState(false)
 
-	useEffect(() => {
-		if (!user) return
-		const getChats = async () => await UserRoute.getChats()
-		getChats().then(({ chatIDs }) => {
-			setChatIDs(chatIDs)
-		})
-	}, [user])
+	const onGetChats = useGetChats(user.unauthorized)
+
+	if (onGetChats.isError) {
+		return (<Heading>Error: ${onGetChats.error.message}</Heading>)
+	}
 
 
-	if (chatIDs === null) {
+	if (onGetChats.isLoading) {
 		return (<Heading>Загрузка...</Heading>)
 	}
+
 
 	return (
 		<>
@@ -69,7 +56,7 @@ const Home = () => {
 				<Stack width='100%' direction={'row'} height='100%' spacing={8}>
 					<Container height='100%' overflow='auto'>
 						<Stack padding='0 0 48px 0' spacing={4} minWidth={'300px'} width='100%' align={'center'}>
-							{chatIDs.length > 0 ? chatIDs.map(chatID => {
+							{onGetChats.data.chatIDs.length > 0 ? onGetChats.data.chatIDs.map(chatID => {
 								//request
 								const chat = {
 									_id: chatID,
@@ -93,7 +80,7 @@ const Home = () => {
 									userID: 'userID'
 								}
 
-								return <ChatItem key={chat._id} chat={chat} lastMessage={lastMessage} />
+								return <ChatItem key={chat._id} chatID={chat._id} />
 							}) : <ChatNull />}
 						</Stack>
 					</Container>
