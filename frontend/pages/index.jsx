@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
 	Avatar,
@@ -22,15 +22,23 @@ import ChatItem from '../components/chats/item/chat_item'
 import ChatNull from '../components/chats/null/chat_null'
 import { useRouter } from 'next/router'
 import UserModal from '../components/user/modal'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useGetChats } from '../hooks/user/useGetChats'
+import { io } from 'socket.io-client'
+import { socketConnect } from '../store/slices/socketSlice'
 
 const Home = () => {
 	const router = useRouter()
+	const dispatch = useDispatch()
 	const user = useSelector(state => state.user)
 	const [isUserModalOpen, setUserModalOpen] = useState(false)
 
 	const onGetChats = useGetChats(user.unauthorized)
+
+	// useEffect(() => {
+
+	// }, [])
+
 
 	if (onGetChats.isError) {
 		return (<Heading>Error: ${onGetChats.error.message}</Heading>)
@@ -40,6 +48,11 @@ const Home = () => {
 	if (onGetChats.isLoading) {
 		return (<Heading>Загрузка...</Heading>)
 	}
+
+	if (!onGetChats.data) {
+		return (<Heading>Ошибка при загрузке данных</Heading>)
+	}
+
 
 
 	return (
@@ -57,30 +70,7 @@ const Home = () => {
 					<Container height='100%' overflow='auto'>
 						<Stack padding='0 0 48px 0' spacing={4} minWidth={'300px'} width='100%' align={'center'}>
 							{onGetChats.data.chatIDs.length > 0 ? onGetChats.data.chatIDs.map(chatID => {
-								//request
-								const chat = {
-									_id: chatID,
-									title: 'Хуйс' + chatID,
-									creatorID: 'creatorID',
-									isPrivate: false,
-									key: {},
-									avatarID: 'avatarID',
-									unreadCount: 3
-								}
-
-								const lastMessage = {
-									_id: 'mesd',
-									value: 'зуй зуй хуй хуй...! ',
-									sentAt: new Date().getTime(),
-									chatID: 'chatID',
-									editAt: null,
-									isReplyTo: null,
-									hasAttachments: false,
-									system: false,
-									userID: 'userID'
-								}
-
-								return <ChatItem key={chat._id} chatID={chat._id} />
+								return <ChatItem key={chatID} chatID={chatID} />
 							}) : <ChatNull />}
 						</Stack>
 					</Container>

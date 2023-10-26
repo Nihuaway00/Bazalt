@@ -15,7 +15,6 @@ export function Providers({
 	children
 }) {
 	return (
-
 		<CacheProvider>
 			<ChakraProvider>
 				<QueryClientProvider client={queryClient}>

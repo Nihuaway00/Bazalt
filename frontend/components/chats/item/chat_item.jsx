@@ -68,7 +68,7 @@ const ChatItem = ({ chatID }) => {
 				<Heading size={'sm'}>{onGetChat.data.chat.title}</Heading>
 				<Stack direction={'row'}>
 					{
-						lastMessage ? <Text fontSize={'sm'} noOfLines={2}>{lastMessage.message.value}</Text> :
+						lastMessage && (lastMessage.message || lastMessage.attachments) ? <Text fontSize={'sm'} noOfLines={2}>{lastMessage.message.value}</Text> :
 							<Text fontSize={'sm'} opacity={'0.5'} noOfLines={1}>Пусто</Text>
 					}
 				</Stack>
@@ -91,7 +91,7 @@ const ChatItem = ({ chatID }) => {
 
 				</Menu>
 				{
-					!lastMessage || <Text userSelect={'none'} fontSize={'xs'} whiteSpace={'nowrap'}>
+					!lastMessage?.message?.sentAt || <Text userSelect={'none'} fontSize={'xs'} whiteSpace={'nowrap'}>
 						{
 							new Date(lastMessage.message.sentAt.seconds * 1000).toLocaleString('ru', {
 								day: 'numeric',

@@ -74,10 +74,12 @@ const LoginPage = () => {
 
 				dispatch(setUser(data.user))
 				localStorage.setItem('sessionID', data.sessionID)
+				localStorage.setItem('isAuth', true)
 				router.push('/')
 			},
 			onError: (err) => {
 				alert(err.message)
+				localStorage.setItem('isAuth', false)
 			}
 		})
 	}
@@ -96,8 +98,15 @@ const LoginPage = () => {
 		})
 	}
 
+	if (!user) {
+		return (
+			<Stack direction={'column'} align={'center'}>
+				<Heading>Загрузка ...</Heading>
+			</Stack>
+		)
+	}
 
-	if (user && !user.unauthorized) {
+	if (!user.unauthorized) {
 		return (
 			<Stack direction={'column'} align={'center'}>
 				<Heading>{user.name},</Heading>

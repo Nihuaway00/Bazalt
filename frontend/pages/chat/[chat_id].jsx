@@ -60,7 +60,6 @@ import { useGetMessages } from '../../hooks/chats/useGetMessagesChat'
 import { useSendMessage } from '../../hooks/messages/useSendMessage'
 import { useQueryClient } from 'react-query'
 
-
 // const importChat = {
 // 	avatarID: '',
 // 	creatorID: 'creatorID',
@@ -153,10 +152,18 @@ const Middle = ({ messages }) => {
 
 const Bottom = ({ chatID }) => {
 	const queryClient = useQueryClient()
-
+	const socket = useSelector(state => state.socket)
 	const [files, setFiles] = useState([])
 	const [value, setValue] = useState('')
 	const onSendMessage = useSendMessage(chatID)
+
+	useEffect(() => {
+		if (!socket) return
+		socket.on('SERVER:message', (data) => {
+			console.log('get: ', data)
+		})
+
+	}, [socket])
 
 	const sendHandler = () => {
 		onSendMessage.mutate({ value, attachmets: [] }, {
