@@ -35,10 +35,10 @@ export default function MyApp({ Component, pageProps }) {
 
 		socket.on('SERVER:message', async ({ encrypted, iv, chatID }) => {
 
-			const chatKeys = store.getState().chatKeys
-			const chatKey = chatKeys.filter(chatKey => chatKey.chatID === chatID)[0]
+			const chats = store.getState().chats
+			const chat = chats.filter(chat => chat._id === chatID)[0]
 			const aes = new AesCryptoHandler()
-			await aes.importKey('jwk', chatKey.key)
+			await aes.importKey('jwk', chat.key)
 			const decrypted = await aes.decrypt(
 				new Uint8Array(encrypted.split(",")),
 				new Uint8Array(iv.split(","))

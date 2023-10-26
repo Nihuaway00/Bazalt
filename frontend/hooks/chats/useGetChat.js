@@ -3,7 +3,7 @@ import ChatRoute from "../../routes/chatRoute"
 import { async } from "validate.js"
 import { AesCryptoHandler } from "../../handlers/cryptoHandler"
 import { store } from "../../store/store"
-import { addChatKeyAction, setChatKeyAction } from "../../store/slices/chatKeySlice"
+import { setChatAction } from "../../store/slices/chatSlice"
 
 export const useGetChat = (chatID) => {
 	return useQuery(['chat', chatID], async () => {
@@ -16,7 +16,7 @@ export const useGetChat = (chatID) => {
 		)
 		res.data = JSON.parse(decrypted)
 
-		store.dispatch(setChatKeyAction(res.data.chat._id, res.data.chat.key))
+		store.dispatch(setChatAction(res.data.chat))
 
 		return res
 	}, {

@@ -2,13 +2,13 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import userReducer from './slices/userSlice'
 import socketReducer from './slices/socketSlice'
-import chatKeyReducer from './slices/chatKeySlice'
+import chatReducer from './slices/chatSlice'
 
 const store = configureStore({
 	reducer: {
 		user: userReducer,
 		socket: socketReducer,
-		chatKeys: chatKeyReducer
+		chats: chatReducer
 	},
 	devTools: true
 })
