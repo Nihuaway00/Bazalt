@@ -98,7 +98,8 @@ class MessageService {
 				})
 			)
 
-			this.socket.to(chatID).emit("SERVER:message", {
+			this.io.to(chatID).emit("SERVER:message", {
+				chatID,
 				encrypted: new Uint8Array(encrypted).toString(),
 				iv: iv.toString()
 			})
