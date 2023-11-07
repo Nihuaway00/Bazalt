@@ -3,17 +3,17 @@ import MemberController from "#members/memberController.js"
 import UserController from "#user/userController.js"
 
 class UserService {
-	//get = async (req, res) => {
-	//	try {
-	//		const { userID } = req.body
-	//		if (!userID) throw new Error("Invalid input data")
-	//		const userSnap = await UserController.getFromID(userID)
-	//		res.send(userSnap.data())
-	//	} catch (e) {
-	//		console.log(e.message)
-	//		res.status(500).send(e.message)
-	//	}
-	//}
+	get = async (req, res) => {
+		try {
+			const { userID } = req.params
+			if (!userID) throw new Error("Invalid input data")
+			const userSnap = await UserController.getFromID(userID)
+			res.send({ user: userSnap.data() })
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
 
 	find = async (req, res) => {
 		try {

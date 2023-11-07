@@ -43,7 +43,8 @@ class AesCryptoHandler {
 		)
 	}
 
-	encrypt = async (data, iv = crypto.getRandomValues(new Uint8Array(16))) => {
+	encrypt = async (data, iv) => {
+		if (!iv) iv = crypto.getRandomValues(new Uint8Array(16))
 		const en = new TextEncoder()
 		const encrypted = await crypto.subtle.encrypt(
 			{

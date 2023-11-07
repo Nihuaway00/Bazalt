@@ -35,11 +35,6 @@ const Home = () => {
 
 	const onGetChats = useGetChats(user.unauthorized)
 
-	// useEffect(() => {
-
-	// }, [])
-
-
 	if (onGetChats.isError) {
 		return (<Heading>Error: ${onGetChats.error.message}</Heading>)
 	}
@@ -52,7 +47,6 @@ const Home = () => {
 	if (!onGetChats.data) {
 		return (<Heading>Ошибка при загрузке данных</Heading>)
 	}
-
 
 
 	return (

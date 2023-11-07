@@ -50,7 +50,7 @@ class AuthService {
 			await SessionController.bindUser(userID, session.id)
 
 			res.send({
-				user: userSnap.data(),
+				user: { ...userSnap.data(), _id: userSnap.id },
 				sessionID: req.session.id,
 			})
 		} catch (e) {
@@ -62,7 +62,8 @@ class AuthService {
 		try {
 			const { userID } = req.session
 			const userSnap = await UserController.getFromID(userID)
-			res.send({ user: userSnap.data() })
+
+			res.send({ user: { ...userSnap.data(), _id: userSnap.id } })
 		} catch (e) {
 			next(e)
 		}

@@ -11,6 +11,7 @@ import { socketConnect } from '../store/slices/socketSlice'
 import { Providers } from '../layouts/providers'
 import { Middlewares } from '../layouts/middlewares'
 import { AesCryptoHandler } from '../handlers/cryptoHandler'
+import { addMessageAction } from '../store/slices/messageSlice'
 
 
 export default function MyApp({ Component, pageProps }) {
@@ -44,7 +45,8 @@ export default function MyApp({ Component, pageProps }) {
 				new Uint8Array(iv.split(","))
 			)
 			const data = JSON.parse(decrypted)
-			console.log(data);
+
+			store.dispatch(addMessageAction(data))
 		})
 	}, [])
 

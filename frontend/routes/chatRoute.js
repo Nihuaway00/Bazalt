@@ -14,6 +14,7 @@ class ChatRoute {
 	}
 
 	static getMessages = async (chatID, timestamp, newest) => {
+
 		return await $api.post(`${url}/chat/` + chatID + '/messages', { timestamp, newest })
 	}
 

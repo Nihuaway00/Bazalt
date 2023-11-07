@@ -88,12 +88,16 @@ class ChatService {
 			let messageSnaps = []
 			if (newest) {
 				messageSnaps = await MessageController.get([
+					where('chatID', '==', chat_id),
 					where("sentAt", ">", new Date(timestamp)),
+					orderBy('sentAt', 'desc'),
 					limit(10)
 				])
 			} else {
 				messageSnaps = await MessageController.get([
+					where('chatID', '==', chat_id),
 					where("sentAt", "<=", new Date(timestamp)),
+					orderBy('sentAt', 'desc'),
 					limit(10)
 				])
 			}

@@ -1,5 +1,6 @@
 class User {
 	constructor(name, email, enteredAt, createdAt, activated, tag) {
+		this._id = null
 		this.name = name
 		this.email = email
 		this.createdAt = createdAt
@@ -23,8 +24,7 @@ const userConverter = {
 	fromFirestore: (snapshot, options) => {
 		const data = snapshot.data(options)
 		const exit = new User(data.name, data.email, data.createdAt, data.enteredAt, data.activated, data.tag)
-		exit._id = snapshot.id
-		return exit
+		return { ...exit, _id: snapshot.id }
 	},
 }
 export { User, userConverter }

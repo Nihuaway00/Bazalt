@@ -2,6 +2,7 @@ import {
 	AddIcon,
 	ArrowBackIcon,
 	ArrowForwardIcon,
+	ArrowRightIcon,
 	AttachmentIcon,
 	ChatIcon,
 	CloseIcon,
@@ -52,71 +53,13 @@ import ImageNext from 'next/image'
 import FileList from '../../components/common/file/fileList'
 import FileInput from '../../components/common/file/fileInput'
 import FileInputButton from '../../components/common/file/fileInputButton'
-import ModalSample from '../../components/common/modal/modalSample'
 import ChatModal from '../../components/chats/chatModal'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useGetChat } from '../../hooks/chats/useGetChat'
 import { useGetMessages } from '../../hooks/chats/useGetMessagesChat'
 import { useSendMessage } from '../../hooks/messages/useSendMessage'
 import { useQueryClient } from 'react-query'
-
-// const importChat = {
-// 	avatarID: '',
-// 	creatorID: 'creatorID',
-// 	isPrivate: false,
-// 	key: {},
-// 	title: 'Хуй сунь вынь',
-// 	_id: 'chatID'
-// }
-
-// const importAvatar = {
-// 	path: '/2.jpg'
-// }
-
-// const importMessages = [
-// 	{
-// 		"userID": "123",
-// 		"value": "Привет! Как твои дела ?",
-// 		"id": "1",
-// 		"editAt": "",
-// 		"sentAt": "192819372",
-// 		attachmets: [
-// 			{
-// 				preview: 'image',
-// 				filename: '3',
-// 				src: 'http://127.0.0.1:9000/attachments/3.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=8TTWI7FLX9SWXITG7PVX%2F20231002%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231002T192614Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiI4VFRXSTdGTFg5U1dYSVRHN1BWWCIsImV4cCI6MTY5NjMxNzkwMSwicGFyZW50Ijoicm9vdDEyMzQifQ.PP3R4FFMHGLF452RqWNfoMYybAVBNiaKPXP9ZVUC87rT2LJA6fADARx5v0CsJqUelxISGm8tFym5vpIhec1vlg&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=4037df417e30b42ae19d928db072894178472fa014a19328f0ab50dd15a64207'
-// 			},
-// 			{
-// 				filename: 'compose.yaml',
-// 				src: "http://127.0.0.1:9000/attachments/compose.yml?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=8TTWI7FLX9SWXITG7PVX%2F20231002%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231002T214347Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiI4VFRXSTdGTFg5U1dYSVRHN1BWWCIsImV4cCI6MTY5NjMxNzkwMSwicGFyZW50Ijoicm9vdDEyMzQifQ.PP3R4FFMHGLF452RqWNfoMYybAVBNiaKPXP9ZVUC87rT2LJA6fADARx5v0CsJqUelxISGm8tFym5vpIhec1vlg&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=ee2e888167830ca2809f63a6ec1b691af168b3906ce066e8616d606fa4da865d"
-// 			}
-// 		]
-// 	},
-// 	{
-// 		"userID": "456",
-// 		"value": "Нормально, спасибо! А у тебя как дела ?",
-// 		"id": "2",
-// 		"editAt": "",
-// 		"sentAt": "",
-// 		attachmets: [{
-// 			filename: 'videoplayback',
-// 			src: "http://127.0.0.1:9000/attachments/videoplayback.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=8TTWI7FLX9SWXITG7PVX%2F20231002%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231002T214326Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiI4VFRXSTdGTFg5U1dYSVRHN1BWWCIsImV4cCI6MTY5NjMxNzkwMSwicGFyZW50Ijoicm9vdDEyMzQifQ.PP3R4FFMHGLF452RqWNfoMYybAVBNiaKPXP9ZVUC87rT2LJA6fADARx5v0CsJqUelxISGm8tFym5vpIhec1vlg&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=5fac0bd8606168b783c802110869c61d21259d1198ed38f3c72961e9cb10ad88"
-// 		}]
-// 	},
-// 	{
-// 		"userID": "789",
-// 		"value": "У меня тоже всё хорошо.Чем занимаешься ?",
-// 		"id": "3",
-// 		"editAt": "",
-// 		"sentAt": "",
-// 		attachmets: [
-// 			{
-// 				filename: 'image',
-// 				src: 'http://127.0.0.1:9000/attachments/banner.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=8TTWI7FLX9SWXITG7PVX%2F20231002%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231002T192628Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiI4VFRXSTdGTFg5U1dYSVRHN1BWWCIsImV4cCI6MTY5NjMxNzkwMSwicGFyZW50Ijoicm9vdDEyMzQifQ.PP3R4FFMHGLF452RqWNfoMYybAVBNiaKPXP9ZVUC87rT2LJA6fADARx5v0CsJqUelxISGm8tFym5vpIhec1vlg&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=a21a90a79c07b30bd3088aed6b3d9a4bf02cb24693a544040a9b26402cef827e'
-// 			}
-// 		]
-// 	}
-// ]
+import { addMessageAction, setMessageAction } from '../../store/slices/messageSlice'
 
 const Top = ({ chat, avatar, onOpenSettings }) => {
 	const router = useRouter()
@@ -136,13 +79,23 @@ const Top = ({ chat, avatar, onOpenSettings }) => {
 	)
 }
 
+
 const Middle = ({ messages }) => {
+	const user = useSelector(state => state.user)
+
+	if (!messages) {
+		return <Stack padding={'24px 0 24px 0'} spacing={2} overflow={'auto'} height={'100%'} direction={'column-reverse'}>
+			<Text>Пусто</Text>
+		</Stack>
+	}
+
 	return (
 		<Stack padding={'24px 0 24px 0'} spacing={2} overflow={'auto'} height={'100%'} direction={'column-reverse'}>
 			{
-				messages.map(({ message, attachmets }, index) => {
+				messages.map(({ message, attachments }, index) => {
+					console.log(index, message);
 					return (
-						<MessageItem attachmets={attachmets} key={index} userID={message.userID} value={message.value} id={message.id} hasAttachments={message.hasAttachments} editAt={message.editAt} isReplyTo={message.isReplyTo} sentAt={message.sentAt} isSelf={index === 1} />
+						<MessageItem attachments={attachments} key={index} userID={message.userID} value={message.value} id={message.id} hasAttachments={message.hasAttachments} editAt={message.editAt} isReplyTo={message.isReplyTo} sentAt={message.sentAt} isSelf={message.userID === user._id} />
 					)
 				})
 			}
@@ -152,45 +105,43 @@ const Middle = ({ messages }) => {
 
 const Bottom = ({ chatID }) => {
 	const queryClient = useQueryClient()
-	const socket = useSelector(state => state.socket)
+	// const socket = useSelector(state => state.socket)
 	const [files, setFiles] = useState([])
 	const [value, setValue] = useState('')
 	const onSendMessage = useSendMessage(chatID)
 
-	useEffect(() => {
-		if (!socket) return
-		socket.on('SERVER:message', (data) => {
-			console.log('get: ', data)
-		})
-
-	}, [socket])
-
 	const sendHandler = () => {
-		onSendMessage.mutate({ value, attachmets: [] }, {
-			onSuccess: ({ data }) => {
+		onSendMessage.mutate({ value, attachments: files }, {
+			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ['chat', chatID, 'messages'] })
 			},
 			onError: (err) => alert(err.message)
 		})
+		setFiles([])
+		setValue([])
 	}
 
 	return (
-		<Grid gap={4} maxWidth={'100%'} templateColumns={'min-content auto min-content'} templateRows={'auto auto'}
+		<Grid gap={2} maxWidth={'100%'} templateColumns={'min-content auto min-content'} templateRows={'auto auto'}
 			templateAreas={
 				`"empty2 attach attach"
 	 			"left input right"
-	 `} padding={'12px 0 0 0'} spacing={4} borderTop={'1px rgba(0,0,0,0.1) solid'}>
-			<GridItem area="left">
-				<Stack spacing={4} padding={'8px 0 0 0'}>
-					<FormLabel padding={0} margin={0} position={'relative'}>
+	 `} padding={'12px 24px'} borderBottomRadius={8} spacing={4} border={'1px rgba(0,0,0,0.1) solid'} bg={'rgba(0,0,0,0.02)'}>
+			<GridItem area="left" padding={0} marginRight={2}>
+				<Center height={'100%'}>
+					<FormLabel padding={0} margin={0} position={'relative'} height={'100%'}>
 						<FileInput maxSize='209715200' onError={(err) => alert(err)} onAttach={(newFile) => setFiles(prev => [...prev, newFile])} />
-						<AttachmentIcon cursor={'pointer'} />
+						<Stack height={'100%'} justify={'center'}>
+
+							<AttachmentIcon cursor={'pointer'} color={'gray.500'} />
+						</Stack>
+
 					</FormLabel>
-				</Stack>
+				</Center>
 			</GridItem>
-			<GridItem area={'input'}>
-				<Textarea value={value} onChange={(e) => setValue(e.target.value)} bg={'gray.100'} padding={'8px 12px'} placeholder="Введите сообщение..."
-					variant={'unstyled'} resize={'none'} rows={2} />
+			<GridItem border={'1px rgba(0,0,0,0.1) solid'} borderRadius={4} area={'input'}>
+				<Textarea value={value} onChange={(e) => setValue(e.target.value)} bg={'white'} padding={'8px 12px'} placeholder="Введите сообщение..."
+					variant={'unstyled'} resize={'none'} rows={1} height={'42px'} />
 			</GridItem>
 			<GridItem area={'attach'}>
 				<FileList files={files} onRemove={(index) => setFiles(prev => {
@@ -202,10 +153,9 @@ const Bottom = ({ chatID }) => {
 					{(files.length >= 10 || files.length === 0) || <FileInputButton onError={(err) => alert(err)} onAttach={(newFile) => setFiles(prev => [...prev, newFile])} />}
 				</FileList>
 			</GridItem>
-			<GridItem area="right">
-				<Stack align={'center'}>
-					<Button onClick={sendHandler} rightIcon={<ArrowForwardIcon />}>...</Button>
-
+			<GridItem area="right" marginLeft={4}>
+				<Stack onClick={sendHandler} height={'100%'} cursor={'pointer'} align={'end'} justify={'center'} width={'28px'}>
+					<IconButton isDisabled={!value && files.length === 0} icon={<ArrowRightIcon boxSize={3} color={'gray.500'} />} variant={'outline'} isLoading={onSendMessage.isLoading} />
 				</Stack>
 			</GridItem>
 		</Grid>
@@ -213,18 +163,17 @@ const Bottom = ({ chatID }) => {
 }
 
 const ChatPage = () => {
-	const router = useRouter()
-	const { chat_id } = router.query
 	const user = useSelector(state => state.user)
+	const router = useRouter()
+	const dispatch = useDispatch()
+	const { chat_id } = router.query
 
 	const onGetChat = useGetChat(chat_id)
 	const onGetMessages = useGetMessages(chat_id)
 
 	const [chat, setChat] = useState(null)
 	const [avatar, setAvatar] = useState(null)
-	const [messages, setMessages] = useState([])
-
-
+	const messages = useSelector(state => state.messages)
 	const [isSettingsOpen, setSettingsOpen] = useState(false)
 
 	useEffect(() => {
@@ -234,10 +183,11 @@ const ChatPage = () => {
 
 	useEffect(() => {
 		if (!chat_id) return
-
-		onGetMessages.mutate({ chatID: chat_id, timestamp: new Date().valueOf(), newest: false }, {
+		console.log(user);
+		onGetMessages.mutate({ chatID: chat_id, timestamp: 1698993956266, newest: false }, {
 			onSuccess: ({ data }) => {
-				setMessages(data.messages)
+				console.log(data);
+				dispatch(addMessageAction(data.messages))
 			},
 			onError: (err) => {
 				alert(err.message)

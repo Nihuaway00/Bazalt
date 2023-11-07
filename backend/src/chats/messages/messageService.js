@@ -71,16 +71,18 @@ class MessageService {
 				const ref = await AttachmentController.createRef()
 				FileHandler.uploadBuffer(
 					"attachments",
-					`${ref.id}.${attachment.mimetype.split("/")[1]}`,
+					`${ref.id}.${attachment.type.split("/")[1]}`,
 					attachment.size,
-					{},
-					attachment.buffer
+					attachment.type,
+					attachment.buffer,
+					attachment.originalname
 				)
 
 				await AttachmentController.set(
 					ref,
 					messageSnap.id,
-					`attachments/${ref.id}.${attachment.mimetype.split("/")[1]}`
+					`attachments/${ref.id}.${attachment.type.split("/")[1]}`,
+					attachment.originalname
 				)
 			})
 

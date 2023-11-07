@@ -3,8 +3,8 @@ import minio from "#database/minio.js"
 //docs: https://min.io/docs/minio/linux/developers/javascript/API.html#javascript-client-api-reference
 
 class FileHandler {
-	uploadBuffer = (bucket, name, size, metadata, buffer) => {
-		minio.putObject(bucket, name, buffer, size, metadata, (err) => {
+	uploadBuffer = (Bucket, name, size, ContentType, Body, filename) => {
+		minio.putObject(Bucket, name, Body, { "Content-Type": ContentType, filename }, (err, data) => {
 			if (err) return console.log(err)
 			console.log("File uploaded!")
 		})

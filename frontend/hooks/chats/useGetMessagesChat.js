@@ -3,7 +3,7 @@ import ChatRoute from "../../routes/chatRoute"
 import { AesCryptoHandler } from "../../handlers/cryptoHandler"
 
 export const useGetMessages = (chatID) => {
-	return useMutation(['chat', chatID, 'messages'],
+	return useMutation(['chat', chatID, 'messages',],
 		async ({ timestamp, newest }) => {
 
 			const res = await ChatRoute.getMessages(chatID, timestamp, newest)
@@ -15,6 +15,9 @@ export const useGetMessages = (chatID) => {
 			)
 			res.data = JSON.parse(decrypted)
 			return res
+		},
+		{
+
 		}
 	)
 }

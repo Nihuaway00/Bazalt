@@ -39,13 +39,13 @@ class attachmentController {
 		return snaps.docs
 	}
 
-	add = async (messageID, path) => {
-		const ref = await addDoc(this.coll, new Attachment(messageID, path))
+	add = async (messageID, path, filename) => {
+		const ref = await addDoc(this.coll, new Attachment(messageID, path, filename))
 		return await getDoc(ref)
 	}
 
-	set = async (attachmentRef, messageID, path) => {
-		await setDoc(attachmentRef, new Attachment(messageID, path))
+	set = async (attachmentRef, messageID, path, filename) => {
+		await setDoc(attachmentRef, new Attachment(messageID, path, filename))
 	}
 
 	update = async (attachmentID, update) => {

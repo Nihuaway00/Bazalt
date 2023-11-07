@@ -23,6 +23,3 @@ firebase.init.js
 database.rules.json
 firebase.json
 .firebaserc
-
-#docs
-docs/

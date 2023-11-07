@@ -5,11 +5,26 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "chrome",
+			"name": "Next.js: dev",
+			"type": "node-terminal",
 			"request": "launch",
-			"name": "Launch Chrome against localhost",
-			"url": "http://localhost:8080",
-			"webRoot": "${workspaceFolder}"
+			"command": "npm run dev"
+		},
+		{
+			"name": "firefox",
+			"type": "firefox",
+			"request": "launch",
+			"url": "http://localhost:3000",
+			"pathMappings": [
+				{
+					"url": "webpack://_n_e",
+					"path": "${workspaceFolder}"
+				},
+				{
+					"url": "webpack://_n_e",
+					"path": "${workspaceFolder}"
+				}
+			]
 		}
 	]
 }
