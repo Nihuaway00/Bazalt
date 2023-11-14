@@ -39,11 +39,11 @@ class MessageController {
 		return await this.get([where("chatID", "==", chatID)])
 	}
 
-	add = async (chatID, userID, value, system, hasAttachments) => {
+	add = async (chatID, userID, value, system) => {
 		if (!chatID || !value) throw new Error("Invalid input data")
 		const chatSnap = await ChatController.getFromID(chatID)
 		if (!chatSnap.exists()) throw new Error("Chat in not exist")
-		const messageRef = await addDoc(this.coll, new Message(chatID, userID, value, null, new Date(), null, system, hasAttachments))
+		const messageRef = await addDoc(this.coll, new Message(chatID, userID, value, new Date(), null, system))
 		return await getDoc(messageRef)
 	}
 

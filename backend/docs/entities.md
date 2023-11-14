@@ -2,6 +2,7 @@
 	- id 
 	- name
 	- email
+	- tag
 	- createdAt
 	- enteredAt
 	- activated
@@ -39,6 +40,7 @@
 	- title
 	- avatar_id
 	- creator_id
+	- key
 
 ### CHAT_AVATAR
 	- id
@@ -50,6 +52,8 @@
 	- chat_id
 	- user_id
 	- last_seen
+	- invitedAt
+	- invitedBy
 
 ### MESSAGE
 	- id

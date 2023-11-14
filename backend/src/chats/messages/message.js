@@ -3,19 +3,15 @@ class Message {
 		chatID,
 		userID,
 		value,
-		isReplyTo,
 		sentAt,
 		editAt,
 		system,
-		hasAttachments
 	) {
 		this.system = system
 		this.userID = userID
 		this.chatID = chatID
 		this.sentAt = sentAt
-		this.hasAttachments = hasAttachments
 		this.value = value
-		this.isReplyTo = isReplyTo
 		this.editAt = editAt
 	}
 }
@@ -26,9 +22,7 @@ const messageConverter = {
 			userID: message.userID,
 			chatID: message.chatID,
 			sentAt: message.sentAt,
-			hasAttachments: message.hasAttachments,
 			value: message.value,
-			isReplyTo: message.isReplyTo,
 			editAt: message.editAt,
 		}
 	},
@@ -38,11 +32,9 @@ const messageConverter = {
 			data.chatID,
 			data.userID,
 			data.value,
-			data.isReplyTo,
 			data.sentAt,
 			data.editAt,
 			data.system,
-			data.hasAttachments
 		)
 		exit._id = snapshot.id
 		return exit

@@ -1,4 +1,4 @@
-const {
+import {
 	query,
 	getDocs,
 	collection,
@@ -8,9 +8,10 @@ const {
 	addDoc,
 	deleteDoc,
 	updateDoc,
-} = require("firebase/firestore")
-const db = require("../database.js")
-const { chatAvatarConverter, ChatAvatar } = require("../classes/chatAvatar")
+	where,
+} from "firebase/firestore"
+import db from "#database/firebase.js"
+import { chatAvatarConverter, ChatAvatar } from "#chats/chatAvatar/chatAvatar.js"
 
 class chatAvatarController {
 	coll = collection(db, "chatAvatars").withConverter(chatAvatarConverter)
@@ -19,7 +20,7 @@ class chatAvatarController {
 		doc(db, "chatAvatars", chatAvatarID).withConverter(chatAvatarConverter)
 
 	createRef = async () =>
-		doc(db, "chatAvatars").withConverter(chatAvatarConverter)
+		doc(this.coll).withConverter(chatAvatarConverter)
 
 	get = async (filters) => {
 		const q = query(this.coll, ...filters).withConverter(chatAvatarConverter)
@@ -30,6 +31,12 @@ class chatAvatarController {
 	getFromID = async (chatAvatarID) => {
 		const chatAvatarDoc = doc(this.coll, chatAvatarID)
 		return await getDoc(chatAvatarDoc)
+	}
+
+	getFromChatID = async (chatID) => {
+		const q = query(this.coll, where('chatID', '==', chatID)).withConverter(chatAvatarConverter)
+		const snaps = await getDocs(q)
+		return snaps.docs[0]
 	}
 
 	add = async (chatID, path) => {
@@ -52,4 +59,4 @@ class chatAvatarController {
 	}
 }
 
-module.exports = new chatAvatarController()
+export default new chatAvatarController()

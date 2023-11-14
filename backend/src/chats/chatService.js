@@ -7,6 +7,8 @@ import { AesCryptoHandler } from "#handlers/cryptoHandler.js"
 import ErrorHandler from "#errorHandler"
 import fileHandler from "#handlers/fileHandler.js"
 import UserController from "#user/userController.js"
+import chatAvatarController from "#chats/chatAvatar/chatAvatarController.js"
+import ImageHandler from "#handlers/imageHandler.js"
 
 class ChatService {
 	io
@@ -124,21 +126,6 @@ class ChatService {
 		}
 	}
 
-	// getChatIDs = async (req, res) => {
-	//   try {
-	//     const { userID } = req.session
-	//     if (!userID) throw ErrorHandler.BadRequest("User ID in undefined")
-	//     const userSnap = await UserController.getFromID(userID)
-	//     if (!userSnap.exists())
-	//       throw ErrorHandler.NotFound("User with this ID is not found")
-	//     const memberSnaps = await MemberController.getFromUserID(userID)
-
-	//     res.send({ chats: memberSnaps.map(snap => snap.data().chatID) })
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
 
 	create = async (req, res) => {
 		try {
@@ -169,6 +156,34 @@ class ChatService {
 		}
 	}
 
+	createPrivate = async (req, res) => {
+		try {
+			const { second_user_id } = req.body
+			const { userID } = req.session
+
+			if (!second_user_id || !userID) throw ErrorHandler.BadRequest("")
+			const aes = new AesCryptoHandler()
+			await aes.generateKey()
+			const chatKeyJwk = await aes.exportKey()
+
+
+			const privateChatSnap = await ChatController.add(
+				null,
+				true,
+				null,
+				chatKeyJwk
+			)
+
+			await MemberController.add(privateChatSnap.id, userID, null)
+			await MemberController.add(privateChatSnap.id, second_user_id, null)
+
+			res.sendStatus(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(e.status).send(e.message)
+		}
+	}
+
 	remove = async (req, res) => {
 		try {
 			const { chat_id } = req.params
@@ -177,22 +192,18 @@ class ChatService {
 			if (!chat_id) throw ErrorHandler.BadRequest()
 			const chatSnap = await ChatController.getFromID(chat_id)
 			if (!chatSnap.exists()) throw ErrorHandler.NotFound()
-			if (chatSnap.data().creatorID !== userID) throw ErrorHandler.Forbidden()
+			if (chatSnap.data().creatorID !== userID) throw ErrorHandler.Forbidden("You`re not a creator of this chat")
 
 			const messageSnaps = await MessageController.getFromChatID(chat_id)
-			const attachmentsToRemove = messageSnaps.map(async ({ id, data }) => {
+			messageSnaps.map(async ({ id, data }) => {
 				await MessageController.delete(id)
-				if (!data().hasAttachemnts) return
-				const attachmentSnaps = await AttachmentController.getFromMessageID(id)
-				return attachmentSnaps.map(async ({ data, id }) => {
-					await AttachmentController.delete(id)
-					return data().path.split("/", 2)[1]
-				})
 			})
 
-			Promise.all(attachmentsToRemove).then(res => {
-				fileHandler.removeMany("attachments", res.flat())
-			})
+			const avatarSnap = await chatAvatarController.getFromChatID(chat_id)
+			if (avatarSnap?.exists()) {
+				fileHandler.remove('chat.avatar', avatarSnap.id)
+				await chatAvatarController.delete(avatarSnap.id)
+			}
 
 			const memberSnaps = await MemberController.getFromChatID(chat_id)
 			memberSnaps.map(async ({ id }) => {
@@ -202,35 +213,12 @@ class ChatService {
 			await ChatController.delete(chat_id)
 
 			this.io.to(chat_id).emit("SERVER:chat/remove")
+			res.sendStatus(201)
 		} catch (e) {
 			console.log(e.message)
 			res.status(e.status).send(e.message)
 		}
 	}
-
-	// editTitle = async (req, res) => {
-	//   try {
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
-
-	// addAvatar = async (req, res) => {
-	//   try {
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
-
-	// removeAvatar = async (req, res) => {
-	//   try {
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
 
 	invite = async (req, res) => {
 		try {
@@ -243,7 +231,7 @@ class ChatService {
 			if (!chatSnap.exists()) throw ErrorHandler.NotFound()
 
 			const memberSnap = await MemberController.getOne(userID, chat_id)
-			if (!memberSnap) throw ErrorHandler.Forbidden()
+			if (!memberSnap) throw ErrorHandler.Forbidden('You aren`t member of this chat')
 			const invitedUserSnap = await UserController.getFromID(invitedID)
 
 			if (!invitedUserSnap.exists())
@@ -275,6 +263,41 @@ class ChatService {
 		}
 	}
 
+	kick = async (req, res) => {
+		try {
+			const { to_kick_id } = req.body
+			const { userID } = req.session
+			const { chat_id } = req.params
+
+			if (!to_kick_id || !chat_id) throw ErrorHandler.BadRequest()
+			const chatSnap = await ChatController.getFromID(chat_id)
+			if (!chatSnap.exists()) throw ErrorHandler.NotFound("Chat with this ID in not found")
+			const toKickMemberSnap = await MemberController.getOne(to_kick_id, chat_id)
+			if (!toKickMemberSnap.exists()) throw ErrorHandler.NotFound("This member is not found")
+			const memberSnap = await MemberController.getOne(userID, chat_id)
+			if (!memberSnap?.exists()) throw ErrorHandler.NotFound("You are not member of this chat")
+			if (toKickMemberSnap.data().invitedBy !== userID) throw ErrorHandler.Forbidden("You weren`t invite this member")
+
+			const toKickUserSnap = await UserController.getFromID(to_kick_id)
+			const systemMessageSnap = await MessageController.add(
+				chat_id,
+				null,
+				`${toKickUserSnap.data().name} kicked from this chat`,
+				true
+			)
+
+			await MemberController.delete(toKickMemberSnap.id)
+
+			this.io
+				.to(chat_id)
+				.emit("SERVER:chat/member/kick", { message: systemMessageSnap.data() })
+			res.sendStatus(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(e.status).send(e.message)
+		}
+	}
+
 	leave = async (req, res) => {
 		try {
 			const { chat_id } = req.params
@@ -289,7 +312,10 @@ class ChatService {
 			if (!memberSnap.exists()) throw ErrorHandler.NotFound()
 
 			if (memberSnap.data().userID === chatSnap.data().creatorID) {
-				//перенос создателя на другого участника
+				const candidateSnaps = await MemberController.get([where('chatID', '==', chat_id), where('userID', '!=', userID), orderBy('invitedAt', 'desc')])
+				if (candidateSnaps.length > 0) {
+					await ChatController.update(chat_id, { creatorID: candidateSnaps[0].id })
+				}
 			}
 
 			await MemberController.delete(memberSnap.id)
@@ -297,8 +323,7 @@ class ChatService {
 				chat_id,
 				null,
 				`${userID} left from this chat`,
-				true,
-				false
+				true
 			)
 
 			if (this.io) {
@@ -306,8 +331,6 @@ class ChatService {
 					.to(chat_id)
 					.emit("SERVER:chat/member/leave", { message: systemMessageSnap.data() })
 			}
-
-
 			res.sendStatus(201)
 		} catch (e) {
 			console.log(e.message)
@@ -315,55 +338,79 @@ class ChatService {
 		}
 	}
 
-	// removeMember = async (req, res) => {
-	//   try {
-	//     const { userID, chatID } = req.body
-	//     if (!userID || !chatID) throw new Error("Invalid input data")
+	editTitle = async (req, res) => {
+		try {
+			const { title } = req.body
+			const { userID } = req.session
+			const { chat_id } = req.params
 
-	//     const userSnap = await UserController.getFromID(userID)
-	//     if (!userSnap.exists()) throw new Error("User in not exist")
+			if (!title || !chat_id) throw ErrorHandler.BadRequest()
+			const chatSnap = await ChatController.getFromID(chat_id)
+			if (!chatSnap.exists()) throw ErrorHandler.NotFound()
+			const memberSnap = await MemberController.getOne(userID, chat_id)
+			if (!memberSnap.exists()) throw ErrorHandler.NotFound()
+			const re = title.match(/[a-zA-Z0-9]*$/)
+			if (!re) throw ErrorHandler.BadRequest("Title is have unsupported symbols")
 
-	//     const chatSnap = await ChatController.getFromID(chatID)
-	//     if (!chatSnap.exists()) throw new Error("Chat in not exist")
-	//     if (chatSnap.data().isPrivate) throw new Error("Chat is private")
+			await ChatController.update(chat_id, { title })
+			const userSnap = await UserController.getFromID(userID)
+			const systemMessageSnap = await MessageController.add(
+				chat_id,
+				null,
+				`${userSnap.data().name} changed title to: ${title}`,
+				true
+			)
 
-	//     const memberSnap = await MemberController.getOne(userID, chatID)
-	//     if (!memberSnap.exists())
-	//       throw new Error("User isn`t member of this chat")
+			this.io
+				.to(chat_id)
+				.emit("SERVER:chat/edit/title", { message: systemMessageSnap.data() })
+			res.sendStatus(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
 
-	//     await MemberController.delete(memberSnap.id)
-	//     // const MessageAppSnap = await MessageAppController.add(
-	//     //   chatID,
-	//     //   "member/delete"
-	//     // );
+	editAvatar = async (req, res) => {
+		try {
+			const avatar = req.file
+			const { chat_id } = req.params
+			const { userID } = req.session
 
-	//     this.io.to(chatID).emit("SERVER:chat/deleteMember", {
-	//       userID,
-	//       time: MessageAppSnap.data().time,
-	//       type: MessageAppSnap.data().type
-	//     })
-	//     res.sendStatus(200)
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
+			if (!avatar || !chat_id) throw ErrorHandler.BadRequest()
+			const chatSnap = await ChatController.getFromID(chat_id)
+			if (!chatSnap.exists()) throw ErrorHandler.Forbidden("Chat is undefined")
+			const memberSnap = await MemberController.getOne(userID, chat_id)
+			if (!memberSnap.exists()) throw ErrorHandler.Forbidden("You`re not member of this chat")
 
-	// upgradeMember = async (req, res) => {
-	//   try {
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
+			if (!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(avatar.mimetype))
+				throw ErrorHandler.BadRequest("The files contain an unsupported format")
+			if (avatar.size > 1048576)
+				throw ErrorHandler.BadRequest("There is a huge file in files: " + file.size.toString())
 
-	// downgradeMember = async (req, res) => {
-	//   try {
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
+			const metadata = await ImageHandler.getMetadata(avatar.buffer)
+			if (Math.min(metadata.width, metadata.height) < 100)
+				throw ErrorHandler.BadRequest("Avatar has resolution less than 100px")
+			if (Math.max(metadata.width, metadata.height) > 2000)
+				throw ErrorHandler.BadRequest("Avatar has too large resolution more then 2000px")
+
+			const avatarSnap = await chatAvatarController.getFromChatID(chat_id)
+			if (avatarSnap?.exists()) {
+				await chatAvatarController.delete(avatarSnap.id)
+			}
+
+			const newAvatarRef = await chatAvatarController.createRef()
+			fileHandler.uploadBuffer('chat.avatar', newAvatarRef.id, avatar.mimetype, avatar.buffer)
+			const path = `chat.avatar/${newAvatarRef.id}.${avatar.mimetype.split("/")[1]}`
+			await chatAvatarController.set(newAvatarRef, chat_id, path)
+
+			this.io.to(chat_id).emit("SERVER: chat/edit/avatar", { path })
+			res.send(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
 }
 
 export default ChatService
