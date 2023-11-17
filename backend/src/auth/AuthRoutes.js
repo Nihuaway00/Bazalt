@@ -1,4 +1,4 @@
-import SessionMiddleware from "#middlewares/sessionMiddleware.js"
+import SessionMiddleware from "#middlewares/authorizeMiddleware.js"
 import AuthService from "#auth/authService.js"
 
 const AuthRoutes = (app) => {

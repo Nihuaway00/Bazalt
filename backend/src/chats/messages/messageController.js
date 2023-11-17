@@ -7,6 +7,7 @@ import {
 	doc,
 	deleteDoc,
 	getDoc,
+	updateDoc,
 } from "firebase/firestore"
 
 import db from "#database/firebase.js"
@@ -51,6 +52,12 @@ class MessageController {
 		if (!messageID || !newText) throw new Error("Invalid input data")
 		const messageSnap = await getDoc(doc(db, "messages", messageID))
 		if (!messageSnap.exists()) throw new Error("Message is not exist")
+		return await getDoc(messageSnap.ref)
+	}
+
+	update = async (messageID, update) => {
+		const messageSnap = await getDoc(doc(db, "messages", messageID))
+		await updateDoc(messageSnap.ref, update)
 		return await getDoc(messageSnap.ref)
 	}
 

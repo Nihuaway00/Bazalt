@@ -1,6 +1,6 @@
 // import multer from "multer";
 // const uploadImage = multer({ storage: multer.memoryStorage() });
-import SessionMiddleware from "#middlewares/sessionMiddleware.js"
+import SessionMiddleware from "#middlewares/authorizeMiddleware.js"
 import UserService from "#user/userService.js"
 
 const UserRoutes = (app) => {

@@ -1,4 +1,4 @@
-import SessionMiddleware from "#middlewares/sessionMiddleware.js"
+import SessionMiddleware from "#middlewares/authorizeMiddleware.js"
 import CryptoMiddleware from "#middlewares/cryptoMiddleware.js"
 import ChatService from "#chats/chatService.js"
 import multer from 'multer'

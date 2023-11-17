@@ -3,7 +3,7 @@ import SessionController from "#session/sessionController.js"
 import MemberController from "#members/memberController.js"
 
 //routes
-import MessageRoutes from "#messages/MessageRoutes.js"
+import { MessageRoutes } from "#chats/messages/messageRoutes.js"
 
 import ChatRoutes from "#chats/ChatRoutes.js"
 import AuthRoutes from "#auth/AuthRoutes.js"

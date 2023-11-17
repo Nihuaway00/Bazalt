@@ -1,25 +1,18 @@
-import SessionMiddleware from "#middlewares/sessionMiddleware.js"
-import MessageService from "#messages/messageService.js"
-import multer from "multer"
-import FileMiddleware from "#middlewares/fileMiddleware.js"
-import CryptoMiddleware from "#middlewares/cryptoMiddleware.js"
+import { isAuthorized } from "#middlewares/authorizeMiddleware.js"
+import { MessageService } from "#messages/messageService.js"
+import { encryptData, decryptData } from "#middlewares/cryptoMiddleware.js"
 
-const upload = multer({ storage: multer.memoryStorage() })
-
-const MessageRoutes = (app, io) => {
+export const MessageRoutes = (app, io) => {
 	const Message = new MessageService(io)
+	// получение сообщения
+	app.post("/message/:message_id", isAuthorized, Message.get, encryptData)
 
-	app.post("/message/:message_id", SessionMiddleware.authorized, Message.get, CryptoMiddleware.encrypt)
-	app.post(
-		"/message",
-		SessionMiddleware.authorized,
-		upload.array("attachments", 10),
-		FileMiddleware.decrypt,
-		FileMiddleware.check,
-		CryptoMiddleware.decrypt,
-		Message.send
-	)
-	app.get("/message/:message_id/remove", SessionMiddleware.authorized, Message.remove)
+	// отправка сообщения
+	app.post("/message", isAuthorized, decryptData, Message.send)
+
+	// удаление сообщения
+	app.get("/message/:message_id/remove", isAuthorized, Message.remove)
+
+	// изменение сообщения
+	app.get("/message/:message_id/edit", isAuthorized, decryptData, Message.edit)
 }
-
-export default MessageRoutes
