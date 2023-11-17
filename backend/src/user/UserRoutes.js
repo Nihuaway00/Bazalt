@@ -1,20 +1,21 @@
-// import multer from "multer";
-// const uploadImage = multer({ storage: multer.memoryStorage() });
-import SessionMiddleware from "#middlewares/authorizeMiddleware.js"
-import UserService from "#user/userService.js"
+import multer from "multer";
+const uploadAvatar = multer({ storage: multer.memoryStorage() });
+import { isAuthorized } from "#middlewares/authorizeMiddleware.js"
+import { UserService } from "#user/userService.js"
 
-const UserRoutes = (app) => {
-	// app.post("/user/avatar/get", avatarService.get);
-	// app.post(
-	//   "/user/avatar/add",
-	//   uploadImage.single("avatar"),
-	//   // avatarMiddleware,
-	//   avatarService.add
-	// );
-	// app.post("/user/avatar/delete", avatarService.delete);
-	app.get("/user/:userID", SessionMiddleware.authorized, UserService.get)
-	app.get("/users/chats", SessionMiddleware.authorized, UserService.getChats)
-	app.get("/user/tag/:tag", SessionMiddleware.authorized, UserService.find)
+export const UserRoutes = (app) => {
+	// изменение имени
+	app.post("/user/edit/name", isAuthorized, UserService.editName)
+
+	// изменение аватарки
+	app.post("/user/edit/avatar", isAuthorized, uploadAvatar.single("avatar"), UserService.editAvatar)
+
+	// изменение тега
+	app.post("/user/edit/tag", isAuthorized, UserService.editTag)
+
+	// получение всех чатов пользователя
+	app.get("/users/chats", isAuthorized, UserService.getChats)
+
+	// получение по тегу
+	app.get("/user/tag/:tag", isAuthorized, UserService.getByTag)
 }
-
-export default UserRoutes

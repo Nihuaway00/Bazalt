@@ -23,7 +23,7 @@ const transporter = createTransport(
 	}
 )
 
-class EmailService {
+export class EmailService {
 	static send = (email, subject, data) => {
 		transporter.sendMail(
 			{
@@ -36,5 +36,3 @@ class EmailService {
 		)
 	}
 }
-
-export default EmailService

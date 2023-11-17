@@ -1,11 +1,11 @@
-class Password {
+export class Password {
 	constructor(value, userID) {
 		this.value = value
 		this.userID = userID
 	}
 }
 
-const passwordConverter = {
+export const passwordConverter = {
 	toFirestore: (password) => {
 		return {
 			value: password.value,
@@ -19,4 +19,3 @@ const passwordConverter = {
 		return exit
 	}
 }
-export { Password, passwordConverter }

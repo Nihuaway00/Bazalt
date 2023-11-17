@@ -1,4 +1,4 @@
-class Message {
+export class Message {
 	constructor(
 		chatID,
 		userID,
@@ -15,7 +15,7 @@ class Message {
 		this.editAt = editAt
 	}
 }
-const messageConverter = {
+export const messageConverter = {
 	toFirestore: (message) => {
 		return {
 			system: message.system,
@@ -40,5 +40,3 @@ const messageConverter = {
 		return exit
 	},
 }
-
-export { Message, messageConverter }

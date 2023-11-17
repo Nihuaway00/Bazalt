@@ -1,7 +1,6 @@
 import MessageController from "#messages/messageController.js"
 import ChatController from "#chats/chatController.js"
 import MemberController from "#members/memberController.js"
-import AttachmentController from "#attachment/attachmentController.js"
 import { where, orderBy, limit } from "firebase/firestore"
 import { AesCryptoHandler } from "#handlers/cryptoHandler.js"
 import ErrorHandler from "#errorHandler"
@@ -10,7 +9,7 @@ import UserController from "#user/userController.js"
 import chatAvatarController from "#chats/chatAvatar/chatAvatarController.js"
 import ImageHandler from "#handlers/imageHandler.js"
 
-class ChatService {
+export class ChatService {
 	io
 	socket
 
@@ -133,6 +132,10 @@ class ChatService {
 			const { userID } = req.session
 
 			if (!title || !userID) throw ErrorHandler.BadRequest("no title or userID")
+
+			const re = title.match(/[a-zA-Z0-9]*$/)
+			if (!re) throw ErrorHandler.BadRequest("Title is have unsupported symbols")
+
 			const aes = new AesCryptoHandler()
 			await aes.generateKey()
 			const chatKeyJwk = await aes.exportKey()
@@ -412,5 +415,3 @@ class ChatService {
 		}
 	}
 }
-
-export default ChatService

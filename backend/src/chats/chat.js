@@ -1,4 +1,4 @@
-class Chat {
+export class Chat {
 	constructor(title, isPrivate, avatarID, creatorID, key) {
 		this.title = title
 		this.isPrivate = isPrivate
@@ -9,7 +9,7 @@ class Chat {
 
 }
 
-const chatConverter = {
+export const chatConverter = {
 	toFirestore: (chat) => {
 		return {
 			title: chat.title,
@@ -26,5 +26,3 @@ const chatConverter = {
 		return exit
 	}
 }
-
-export {chatConverter, Chat}

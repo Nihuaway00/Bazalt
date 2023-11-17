@@ -1,11 +1,11 @@
-class Online{
+export class Online {
 	constructor(userID) {
 		this.userID = userID
 	}
 
 }
 
-const onlineConverter = {
+export const onlineConverter = {
 	toFirestore: (online) => {
 		return {
 			userID: online.userID,
@@ -18,5 +18,3 @@ const onlineConverter = {
 		return exit
 	}
 }
-
-export {Online, onlineConverter}

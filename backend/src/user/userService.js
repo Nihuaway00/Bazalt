@@ -1,80 +1,81 @@
 import ErrorHandler from "#errorHandler"
 import MemberController from "#members/memberController.js"
 import UserController from "#user/userController.js"
+import avatarController from "#avatar/avatarController.js"
 
-class UserService {
-	get = async (req, res) => {
-		try {
-			const { userID } = req.params
-			if (!userID) throw new Error("Invalid input data")
-			const userSnap = await UserController.getFromID(userID)
-			res.send({ user: userSnap.data() })
-		} catch (e) {
-			console.log(e.message)
-			res.status(500).send(e.message)
-		}
-	}
-
-	find = async (req, res) => {
-		try {
-			const { tag } = req.params
-			if (!tag) throw ErrorHandler.BadRequest()
-			const userSnap = await UserController.getFromTag(tag)
-			res.send({ user: userSnap.data() })
-		} catch (e) {
-			console.log(e.message)
-			res.status(500).send(e.message)
-		}
-	}
-
-	// edit = async (req, res) => {
-	//   try {
-	//     const {name, email} = req.body;
-	//     const {userID} = req.session
-	//     if (!name || !email || !userID) throw new Error('Invalid input data');
-
-	//     await UserController.update(userID, {name, email});
-	//     res.sendStatus(200);
-	//   } catch (e) {
-	//     console.log(e.message);
-	//     res.status(500).send(e.message);
-	//   }
-	// }
-
-	// editPassword = async (req, res) => {
-	//   try {
-	//     const { password } = req.body
-	//     const { userID } = req.session
-	//     const sessionID = req.session.id
-	//     if (!password || !userID) throw new Error("Invalid input data")
-
-	//     const hashedPassword = bcrypt.hashSync(password, 3)
-	//     const { id } = await PasswordController.getFromUserID(userID)
-	//     await PasswordController.update(id, { value: hashedPassword })
-
-	//     await SessionFunction.deleteFromUserID(userID, sessionID)
-	//     res.sendStatus(200)
-	//   } catch (e) {
-	//     console.log(e.message)
-	//     res.status(500).send(e.message)
-	//   }
-	// }
-
-	// delete = async (req, res) => {
-	//   try {
-	//     const {userID} = req.session;
-	//     await UserController.delete(userID);
-	//     await SessionFunction.deleteFromUserID(userID);
-	//   } catch (e) {
-	//     console.log(e.message);
-	//     res.status(500).send(e.message);
-	//   }
-	// }
-
-	getChats = async (req, res) => {
+export class UserService {
+	static editName = async (req, res) => {
 		try {
 			const { userID } = req.session
+			const { name } = req.body
+			if (!name) throw ErrorHandler.BadRequest()
 
+			const re = name.match(/[a-zA-Z0-9]*$/)
+			if (!re) throw ErrorHandler.BadRequest("Name is have unsupported symbols")
+
+			await UserController.update(userID, { name })
+			res.sendStatus(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
+
+	static editAvatar = async (req, res) => {
+		try {
+			const avatar = req.file
+			const { userID } = req.session
+
+			if (!avatar) throw ErrorHandler.BadRequest()
+
+			if (!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(avatar.mimetype))
+				throw ErrorHandler.BadRequest("The files contain an unsupported format")
+			if (avatar.size > 1048576)
+				throw ErrorHandler.BadRequest("There is a huge file in files: " + file.size.toString())
+
+			const metadata = await ImageHandler.getMetadata(avatar.buffer)
+			if (Math.min(metadata.width, metadata.height) < 100)
+				throw ErrorHandler.BadRequest("Avatar has resolution less than 100px")
+			if (Math.max(metadata.width, metadata.height) > 2000)
+				throw ErrorHandler.BadRequest("Avatar has too large resolution more then 2000px")
+
+			const avatarSnap = await avatarController.getFromUserID(userID)
+			if (avatarSnap?.exists()) {
+				await avatarController.delete(avatarSnap.id)
+			}
+
+			const newAvatarRef = await avatarController.createRef()
+			fileHandler.uploadBuffer('user.avatar', newAvatarRef.id, avatar.mimetype, avatar.buffer)
+			const path = `user.avatar/${newAvatarRef.id}.${avatar.mimetype.split("/")[1]}`
+			await avatarController.set(newAvatarRef, userID, path)
+
+			res.send(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
+
+	static editTag = async (req, res) => {
+		try {
+			const { userID } = req.session
+			const { tag } = req.body
+			if (!tag) throw ErrorHandler.BadRequest()
+
+			const re = tag.match(/[a-zA-Z0-9]*$/)
+			if (!re) throw ErrorHandler.BadRequest("Tag is have unsupported symbols")
+
+			await UserController.update(userID, { tag })
+			res.sendStatus(201)
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
+
+	static getChats = async (req, res) => {
+		try {
+			const { userID } = req.session
 			const memberSnaps = await MemberController.getFromUserID(userID)
 			res.send({ chatIDs: memberSnaps.map((snap) => snap.data().chatID) })
 		} catch (e) {
@@ -82,6 +83,16 @@ class UserService {
 			res.status(e?.status).send(e?.message)
 		}
 	}
-}
 
-export default new UserService()
+	static getByTag = async (req, res) => {
+		try {
+			const { tag } = req.params
+			if (!tag) throw ErrorHandler.BadRequest("Tag is undefined")
+			const userSnap = await UserController.getFromTag(tag)
+			res.send({ user: userSnap.data() })
+		} catch (e) {
+			console.log(e.message)
+			res.status(500).send(e.message)
+		}
+	}
+}

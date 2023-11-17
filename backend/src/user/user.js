@@ -1,4 +1,4 @@
-class User {
+export class User {
 	constructor(name, email, enteredAt, createdAt, activated, tag) {
 		this._id = null
 		this.name = name
@@ -10,7 +10,7 @@ class User {
 	}
 }
 
-const userConverter = {
+export const userConverter = {
 	toFirestore: (user) => {
 		return {
 			name: user.name,
@@ -27,4 +27,3 @@ const userConverter = {
 		return { ...exit, _id: snapshot.id }
 	},
 }
-export { User, userConverter }

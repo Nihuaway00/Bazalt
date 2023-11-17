@@ -1,4 +1,4 @@
-class Avatar {
+export class Avatar {
 	constructor(userID, path, uploadedAt) {
 		this.userID = userID
 		this.path = path
@@ -6,7 +6,7 @@ class Avatar {
 	}
 }
 
-const avatarConverter = {
+export const avatarConverter = {
 	toFirestore: (avatar) => {
 		return {
 			userID: avatar.userID,
@@ -21,8 +21,3 @@ const avatarConverter = {
 		return exit
 	},
 }
-
-
-const avatarSizes = [140,236,564,736, 1024, 1472]
-
-export {Avatar, avatarConverter, avatarSizes}

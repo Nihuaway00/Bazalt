@@ -1,5 +1,3 @@
-
-
 import {
 	query,
 	getDocs,
@@ -12,7 +10,6 @@ import {
 	deleteDoc,
 	updateDoc,
 } from "firebase/firestore"
-
 import db from "#database/firebase.js"
 import { avatarConverter, Avatar } from "#avatar/avatar.js"
 
@@ -26,7 +23,7 @@ class AvatarController {
 		return snaps.docs
 	}
 
-	ref = async () => doc(this.coll).withConverter(avatarConverter)
+	createRef = async () => doc(this.coll).withConverter(avatarConverter)
 
 	getFromID = async (avatarID) => {
 		if (!avatarID) return

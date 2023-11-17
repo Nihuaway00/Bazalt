@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser"
 import { Server } from "socket.io"
 import http from "http"
 import sessionMiddleware from "#database/sessionConfig.js"
-import createRoutes from "./routes.js"
+import { createRoutes } from "./routes.js"
 
 const app = express()
 const server = http.createServer(app)

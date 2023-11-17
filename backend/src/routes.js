@@ -5,11 +5,11 @@ import MemberController from "#members/memberController.js"
 //routes
 import { MessageRoutes } from "#chats/messages/messageRoutes.js"
 
-import ChatRoutes from "#chats/ChatRoutes.js"
-import AuthRoutes from "#auth/AuthRoutes.js"
-import UserRoutes from "#user/UserRoutes.js"
+import { ChatRoutes } from "#chats/chatRoutes.js"
+import { AuthRoutes } from "#auth/authRoutes.js"
+import { UserRoutes } from "#user/userRoutes.js"
 
-const createRoutes = (app, io) => {
+export const createRoutes = (app, io) => {
 	const onSocketConnection = async (socket) => {
 		try {
 			//const socketSession = socket.handshake.session
@@ -78,5 +78,3 @@ const createRoutes = (app, io) => {
 	MessageRoutes(app, io)
 	UserRoutes(app)
 }
-
-export default createRoutes

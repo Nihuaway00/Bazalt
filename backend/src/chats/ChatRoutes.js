@@ -1,68 +1,67 @@
-import SessionMiddleware from "#middlewares/authorizeMiddleware.js"
-import CryptoMiddleware from "#middlewares/cryptoMiddleware.js"
-import ChatService from "#chats/chatService.js"
+import { isAuthorized } from "#middlewares/authorizeMiddleware.js"
+import { encryptData } from "#middlewares/cryptoMiddleware.js"
+import { ChatService } from "#chats/chatService.js"
 import multer from 'multer'
 const upload = multer({ storage: multer.memoryStorage() })
 
-const ChatRoutes = (app, io) => {
+export const ChatRoutes = (app, io) => {
 	const Chat = new ChatService(io)
 
 	// получение чата
 	app.get(
 		"/chat/:chat_id",
-		SessionMiddleware.authorized,
+		isAuthorized,
 		Chat.get,
-		CryptoMiddleware.encrypt
+		encryptData
 	)
 
 	// получение сообщений чата
 	app.post(
 		"/chat/:chat_id/messages",
-		SessionMiddleware.authorized,
+		isAuthorized,
 		Chat.getMessages,
-		CryptoMiddleware.encrypt
+		encryptData
 	)
 
 	// создание чата (общего)
-	app.post("/chat", SessionMiddleware.authorized, Chat.create)
+	app.post("/chat", isAuthorized, Chat.create)
 
 	// создание чата (личного)
-	app.post("/chat/private", SessionMiddleware.authorized, Chat.createPrivate)
+	app.post("/chat/private", isAuthorized, Chat.createPrivate)
 
 	// удаление чата
-	app.get("/chat/:chat_id/remove", SessionMiddleware.authorized, Chat.remove)
+	app.get("/chat/:chat_id/remove", isAuthorized, Chat.remove)
 
 	// приглашение в чат
 	app.post(
 		"/chat/:chat_id/member",
-		SessionMiddleware.authorized,
+		isAuthorized,
 		Chat.invite
 	)
 
 	// исключение из чата
 	app.post(
 		"/chat/:chat_id/member/kick",
-		SessionMiddleware.authorized,
+		isAuthorized,
 		Chat.kick
 	)
 
 	// выход из чата
 	app.get(
 		"/chat/:chat_id/leave",
-		SessionMiddleware.authorized,
+		isAuthorized,
 		Chat.leave
 	)
 
 	// изменение названия
-	app.post("/chat/:chat_id/edit/title", SessionMiddleware.authorized, Chat.editTitle)
+	app.post("/chat/:chat_id/edit/title", isAuthorized, Chat.editTitle)
 
 	//изменение аватарки
 	app.post(
 		"/chat/:chat_id/edit/avatar",
-		SessionMiddleware.authorized,
+		isAuthorized,
 		upload.single('avatar'),
 		Chat.editAvatar
 	)
 }
 
-export default ChatRoutes

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 
 import ErrorHandler from "#errorHandler"
 import UserController from "#user/userController.js"
-import EmailService from "#email/emailService.js"
+import { EmailService } from "#email/emailService.js"
 import PassController from "#password/passwordController.js"
 import SessionController from "#session/sessionController.js"
 import SocketController from "#socket/socketController.js"
@@ -18,8 +18,8 @@ const ACTIVATE_RELOAD_INTERVAL = process.env.ACTIVATE_RELOAD_INTERVAL
 const RESTORE_SECRET_KEY = process.env.RESTORE_SECRET_KEY
 const RESTORE_RELOAD_INTERVAL = process.env.RESTORE_RELOAD_INTERVAL
 
-class AuthService {
-	async login(req, res, next) {
+export class AuthService {
+	static async login(req, res, next) {
 		try {
 			const { email, pass } = req.body
 			const session = req.session
@@ -58,7 +58,7 @@ class AuthService {
 		}
 	}
 
-	async refresh(req, res, next) {
+	static async refresh(req, res, next) {
 		try {
 			const { userID } = req.session
 			const userSnap = await UserController.getFromID(userID)
@@ -69,7 +69,7 @@ class AuthService {
 		}
 	}
 
-	async verify(req, res, next) {
+	static async verify(req, res, next) {
 		try {
 			const {
 				pubNum,
@@ -111,7 +111,7 @@ class AuthService {
 		}
 	}
 
-	async registration(req, res, next) {
+	static async registration(req, res, next) {
 		try {
 			const { name, email, pass } = req.body
 			if (!name || !email || !pass)
@@ -153,7 +153,7 @@ class AuthService {
 		}
 	}
 
-	activate = async (req, res, next) => {
+	static activate = async (req, res, next) => {
 		try {
 			const { activate_token } = req.params
 			if (!activate_token) throw ErrorHandler.BadRequest("token is undefined")
@@ -168,7 +168,7 @@ class AuthService {
 		}
 	}
 
-	async logout(req, res, next) {
+	static async logout(req, res, next) {
 		try {
 			const session = req.session
 			if (!session.userID) throw ErrorHandler.BadRequest("invalid input data")
@@ -187,7 +187,7 @@ class AuthService {
 		}
 	}
 
-	async sendRestoreToken(req, res, next) {
+	static async sendRestoreToken(req, res, next) {
 		try {
 			const { email } = req.body
 			if (!email) throw ErrorHandler.BadRequest("Email is undefined")
@@ -215,7 +215,7 @@ class AuthService {
 		}
 	}
 
-	async restoreAccess(req, res, next) {
+	static async restoreAccess(req, res, next) {
 		try {
 			const { newPassword } = req.body
 			const { restore_token } = req.params
@@ -261,5 +261,3 @@ class AuthService {
 		}
 	}
 }
-
-export default new AuthService()

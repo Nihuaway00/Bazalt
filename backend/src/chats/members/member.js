@@ -1,4 +1,4 @@
-class Member {
+export class Member {
 	constructor(chatID, userID, lastSeen, invitedBy, invitedAt) {
 		this.chatID = chatID
 		this.userID = userID
@@ -8,7 +8,7 @@ class Member {
 	}
 }
 
-const memberConverter = {
+export const memberConverter = {
 	toFirestore: (member) => {
 		return {
 			chatID: member.chatID,
@@ -25,5 +25,3 @@ const memberConverter = {
 		return exit
 	}
 }
-
-export {Member, memberConverter}
