@@ -1,16 +1,15 @@
-import { AesCryptoHandler } from "../handlers/cryptoHandler"
-
+import { AesCryptoHandler } from "../classes/crypto/AesCipher"
 
 class CryptoMiddleware {
-	iv: ArrayBuffer
-	key: String = '24'
-	salt: String = 'salt'
+	iv
+	key = '24'
+	salt = 'salt'
 
-	constructor(iv: ArrayBuffer) {
+	constructor(iv) {
 		this.iv = iv
 	}
 
-	decrypt = async (encrypted: ArrayBuffer) => {
+	decrypt = async (encrypted) => {
 
 		const aes = new AesCryptoHandler()
 		await aes.generateKeyFromData(this.key, this.salt)
@@ -21,7 +20,7 @@ class CryptoMiddleware {
 		return JSON.parse(decrypted)
 	}
 
-	encrypt = async (data: Object) => {
+	encrypt = async (data) => {
 		const aes = new AesCryptoHandler()
 		await aes.generateKeyFromData(this.key, this.salt)
 		return await aes.encrypt(JSON.stringify(data), this.iv)

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query"
 import ChatRoute from "../../routes/chatRoute"
-import { AesCryptoHandler } from "../../handlers/cryptoHandler"
+import { AesCryptoHandler } from "../../classes/crypto/AesCipher"
 
 export const useGetMessages = (chatID) => {
 	return useMutation(['chat', chatID, 'messages',],

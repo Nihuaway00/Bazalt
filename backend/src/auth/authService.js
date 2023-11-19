@@ -47,12 +47,12 @@ export class AuthService {
 			} = req.body
 
 			const rsa = new RsaCryptoHandler()
-			await rsa.importDecryptKey("jwk", JSON.parse(decryptKeyJwk))
+			await rsa.importDecryptKey("jwk", decryptKeyJwk)
 			const publicNumSignature = await rsa.decrypt(new Uint8Array(publicNumSignatureEncrypted.split(",")))
 
 
 			const hmac = new HmacCryptoHandler()
-			await hmac.import("jwk", JSON.parse(HMACKeyJwk))
+			await hmac.import("jwk", HMACKeyJwk)
 			const verified = await hmac.verify(
 				publicNumSignature,
 				pubNum
@@ -71,15 +71,12 @@ export class AuthService {
 
 			// END VERIFY SECTION
 
-
-
 			const userID = userSnap.id
 			const passSnap = await PassController.getFromUserID(userID)
 			const passVerified = bcrypt.compareSync(pass, passSnap.data().value)
 			if (!passVerified) throw ErrorHandler.BadRequest("Password is incorrect")
 
 			req.session.userID = userID
-			req.session.key = 24
 			req.session.save()
 
 			await SessionController.bindUser(userID, session.id)

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "react-query"
 import ChatRoute from "../../routes/chatRoute"
 import { async } from "validate.js"
-import { AesCryptoHandler } from "../../handlers/cryptoHandler"
+import { AesCryptoHandler } from "../../classes/crypto/AesCipher"
 import { store } from "../../store/store"
 import { setChatAction } from "../../store/slices/chatSlice"
 

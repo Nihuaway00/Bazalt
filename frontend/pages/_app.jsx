@@ -10,7 +10,7 @@ import { io } from 'socket.io-client'
 import { socketConnect } from '../store/slices/socketSlice'
 import { Providers } from '../layouts/providers'
 import { Middlewares } from '../layouts/middlewares'
-import { AesCryptoHandler } from '../handlers/cryptoHandler'
+import { AesCryptoHandler } from '../classes/crypto/AesCipher'
 import { addMessageAction } from '../store/slices/messageSlice'
 
 
