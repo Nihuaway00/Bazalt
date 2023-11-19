@@ -7,8 +7,8 @@ class AuthRoute {
 		return await $api.post(`${url}/auth/registration`, { email, name, pass })
 	}
 
-	static login = async (email, pass) => {
-		return await $api.post(`${url}/auth/login`, { email, pass })
+	static login = async (email, pass, pubNum, decryptKeyJwk, HMACKeyJwk, G, P, publicNumSignatureEncrypted) => {
+		return await $api.post(`${url}/auth/login`, { email, pass, pubNum, decryptKeyJwk, HMACKeyJwk, G, P, publicNumSignatureEncrypted })
 	}
 
 	static refresh = async () => {
