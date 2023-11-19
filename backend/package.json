@@ -69,6 +69,7 @@
     "#messages_app/*": "./src/chats/messages/messages_app/*",
     "#members/*": "./src/chats/members/*",
     "#attachment/*": "./src/chats/messages/attachment/*",
-    "#handlers/*": "./src/handlers/*"
+    "#handlers/*": "./src/handlers/*",
+    "#crypto/*": "./src/classes/crypto/*"
   }
 }

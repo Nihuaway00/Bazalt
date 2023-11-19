@@ -66,6 +66,9 @@
             "#attachment/*": [
                 "./src/chats/messages/attachment/*"
             ],
+            "#crypto/*": [
+                "./src/classes/crypto/*"
+            ],
         }
     },
     "exclude": [

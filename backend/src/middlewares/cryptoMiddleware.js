@@ -1,5 +1,5 @@
 import ErrorHandler from "#errorHandler"
-import { AesCryptoHandler } from "#handlers/cryptoHandler.js"
+import { AesCryptoHandler } from "#crypto/AesCipher.js"
 
 export const encryptData = async (req, res, next) => {
 	try {

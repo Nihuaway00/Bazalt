@@ -5,7 +5,7 @@ import { encryptData, decryptData } from "#middlewares/cryptoMiddleware.js"
 export const MessageRoutes = (app, io) => {
 	const Message = new MessageService(io)
 	// получение сообщения
-	app.post("/message/:message_id", isAuthorized, Message.get, encryptData)
+	app.get("/message/:message_id", isAuthorized, Message.get, encryptData)
 
 	// отправка сообщения
 	app.post("/message", isAuthorized, decryptData, Message.send)
@@ -14,5 +14,5 @@ export const MessageRoutes = (app, io) => {
 	app.get("/message/:message_id/remove", isAuthorized, Message.remove)
 
 	// изменение сообщения
-	app.get("/message/:message_id/edit", isAuthorized, decryptData, Message.edit)
+	app.post("/message/:message_id/edit", isAuthorized, decryptData, Message.edit)
 }

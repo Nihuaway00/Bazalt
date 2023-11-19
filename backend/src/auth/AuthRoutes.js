@@ -6,7 +6,6 @@ export const AuthRoutes = (app) => {
 	app.get("/auth/activate/:activate_token", AuthService.activate)
 	app.post("/auth/login", AuthService.login)
 	app.get("/auth/refresh", isAuthorized, AuthService.refresh)
-	app.post("/auth/verify", AuthService.verify)
 	app.get("/auth/logout", isAuthorized, AuthService.logout)
 	app.post("/auth/restore", AuthService.sendRestoreToken)
 	app.post("/auth/restore/:restore_token", AuthService.restoreAccess)

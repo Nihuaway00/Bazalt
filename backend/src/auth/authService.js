@@ -10,7 +10,8 @@ import SocketController from "#socket/socketController.js"
 import RestoreTokenController from "#restoreToken/restoreTokenController.js"
 import ActivateTokenController from "#activateToken/activateTokenController.js"
 
-import { HmacCryptoHandler, RsaCryptoHandler } from "#handlers/cryptoHandler.js"
+import { HmacCryptoHandler } from "#crypto/HmacCipher.js"
+import { RsaCryptoHandler } from "#crypto/RsaCipher.js"
 import MathHandler from "#handlers/mathHandler.js"
 
 const ACTIVATE_SECRET_KEY = process.env.ACTIVATE_SECRET_KEY
@@ -25,11 +26,7 @@ export class AuthService {
 			const session = req.session
 			if (!email || !pass) throw ErrorHandler.BadRequest("invalid input data")
 
-			if (process.env.NODE_ENV === "development") {
-				session.key = "dev"
-			}
-
-			if (session.userID)
+			if (session.key)
 				throw ErrorHandler.BadRequest("You`re already logged in")
 			const userSnap = await UserController.getFromEmail(email)
 			if (!userSnap?.exists())
@@ -38,39 +35,8 @@ export class AuthService {
 			if (!userSnap.data().activated)
 				throw ErrorHandler.Forbidden("This account not activated")
 
-			const userID = userSnap.id
-			const passSnap = await PassController.getFromUserID(userID)
-			const passVerified = bcrypt.compareSync(pass, passSnap.data().value)
-			if (!passVerified) throw ErrorHandler.BadRequest("Password is incorrect")
 
-			req.session.userID = userID
-			req.session.key = 24
-			req.session.save()
-
-			await SessionController.bindUser(userID, session.id)
-
-			res.send({
-				user: { ...userSnap.data(), _id: userSnap.id },
-				sessionID: req.session.id,
-			})
-		} catch (e) {
-			next(e)
-		}
-	}
-
-	static async refresh(req, res, next) {
-		try {
-			const { userID } = req.session
-			const userSnap = await UserController.getFromID(userID)
-
-			res.send({ user: { ...userSnap.data(), _id: userSnap.id } })
-		} catch (e) {
-			next(e)
-		}
-	}
-
-	static async verify(req, res, next) {
-		try {
+			// START VERIFY SECTION
 			const {
 				pubNum,
 				decryptKeyJwk,
@@ -79,7 +45,6 @@ export class AuthService {
 				P,
 				publicNumSignatureEncrypted,
 			} = req.body
-
 
 			const rsa = new RsaCryptoHandler()
 			await rsa.importDecryptKey("jwk", JSON.parse(decryptKeyJwk))
@@ -103,9 +68,38 @@ export class AuthService {
 			).toString()
 
 			req.session.key = key
+
+			// END VERIFY SECTION
+
+
+
+			const userID = userSnap.id
+			const passSnap = await PassController.getFromUserID(userID)
+			const passVerified = bcrypt.compareSync(pass, passSnap.data().value)
+			if (!passVerified) throw ErrorHandler.BadRequest("Password is incorrect")
+
+			req.session.userID = userID
+			req.session.key = 24
 			req.session.save()
 
-			res.send({ server_pubNum: server_pubNum.toString() })
+			await SessionController.bindUser(userID, session.id)
+
+			res.send({
+				user: { ...userSnap.data(), _id: userSnap.id },
+				sessionID: req.session.id,
+				server_pubNum: server_pubNum.toString()
+			})
+		} catch (e) {
+			next(e)
+		}
+	}
+
+	static async refresh(req, res, next) {
+		try {
+			const { userID } = req.session
+			const userSnap = await UserController.getFromID(userID)
+
+			res.send({ user: { ...userSnap.data(), _id: userSnap.id } })
 		} catch (e) {
 			next(e)
 		}

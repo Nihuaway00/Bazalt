@@ -1,6 +1,6 @@
 import MessageController from "#messages/messageController.js"
 import MemberController from "#members/memberController.js"
-import { AesCryptoHandler } from "#handlers/cryptoHandler.js"
+import { AesCryptoHandler } from "#crypto/AesCipher.js"
 import chatController from "#chats/chatController.js"
 import ErrorHandler from "#errorHandler"
 
