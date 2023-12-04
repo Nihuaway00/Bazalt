@@ -1,0 +1,13 @@
+env:
+  browser: true
+  es2021: true
+extends: ["plugin:prettier/recommended"]
+plugins: ["prettier"]
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
+rules: {
+  "prettier/prettier": "error",
+  "arrow-body-style": "off",
+  "prefer-arrow-callback": "off"
+}

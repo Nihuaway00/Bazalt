@@ -1,0 +1,12 @@
+# Ignore artifacts:
+build
+coverage
+/docs/
+.dockerignore
+.gitignore
+package.json
+.gitattributes
+.prettierignore
+package-lock.json
+jsconfig.json
+Dockerfile

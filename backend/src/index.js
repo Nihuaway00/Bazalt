@@ -16,8 +16,8 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET
 const CLIENT_URL = process.env.CLIENT_URL
 
 const corsConfig = {
-	origin: CLIENT_URL,
-	credentials: true,
+    origin: CLIENT_URL,
+    credentials: true,
 }
 
 app.disable("x-powered-by")
@@ -30,11 +30,11 @@ app.use(router)
 //app.use(ErrorMiddleware)
 
 app.get("/", (req, res) => {
-	res.end("Backend of Bazalt has started")
+    res.end("Backend of Bazalt has started")
 })
 
 const io = new Server(server, { cors: corsConfig })
 createRoutes(router, io)
 server.listen(PORT, async () => {
-	console.log(`[server]: Server is running at http://localhost:${PORT}`)
+    console.log(`[server]: Server is running at http://localhost:${PORT}`)
 })

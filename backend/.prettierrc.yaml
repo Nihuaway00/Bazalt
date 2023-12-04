@@ -1,0 +1,9 @@
+trailingComma: "es5"
+tabWidth: 4
+semi: false
+singleQuote: false
+endOfLine: lf
+bracketSpacing: true
+bracketSameLine: true
+arrowParens: "avoid"
+parser: "babel-flow"
